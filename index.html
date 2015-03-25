@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permissioneditor 0.1.3</title>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild-->
+
+  <!-- build:js bower_components/webcomponentsjs/webcomponents.min.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+  <!-- endbuild -->
+
+  <!-- will be replaced with elements/elements.vulcanized.html -->
+  <link rel="import" href="elements/elements.html">
+  <!-- endreplace-->
+</head>
+
+<body unresolved layout vertical>
+    <polymer-element name="permission-edit">
+        <template>
+
+            <textarea value="{{yaml}}" placeholder="Import"></textarea>
+            <textarea value="{{yamlnew}}" placeholder="Export"></textarea>
+            <button on-tap="{{save}}">Export</button>
+      
+            <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
+            <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml" on-core-ready="{{loadPermissions}}"></yaml-js>
+            
+            <div layout horizontal>
+                <div style="width:15%"></div>
+                <template repeat="{{group in groups}}" layout horizontal>
+                    <div flex>{{group.name}}</div>
+                </template>
+            </div>
+            
+            <template repeat="{{plugin, index in permissions}}">
+                
+                <div divider class="divider row">
+                    <hr>
+                    <div layout horizontal>
+                        <div style="width:15%" on-click="{{toggle}}">
+                            <b>{{plugin.plugin}}</b>
+                        </div>
+                        <template repeat="{{group in groups}}">
+                            <div flex>  
+                                <core-tooltip label="{{plugin.plugin}}.*" position="right">
+                                    <paper-checkbox checked?="{{group.permissions[plugin.plugin]['*']}}" on-change="{{allcheckboxchanged}}"></paper-checkbox>
+                                </core-tooltip>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <core-collapse id="collapse{{plugin.plugin}}">
+                    <template repeat="{{permisson in plugin.permissions}}">
+                        <div class="item" layout horizontal>
+                            <div style="width:15%">{{plugin.plugin}}.{{permisson}}</div>
+                            <template repeat="{{group in groups}}">
+                                <div flex>
+                                    <core-tooltip label="{{plugin.plugin}}.{{permisson}}" position="right">
+                                        <paper-checkbox checked?="{{group.permissions[plugin.plugin][permisson]}}" on-change="{{checkboxchanged}}"></paper-checkbox>
+                                    </core-tooltip>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </core-collapse>
+            </template>
+            
+        </template>
+
+        <!-- build:js scripts/app.js -->
+        <script src="scripts/app.js"></script>
+        <!-- endbuild-->
+    </polymer-element>
+    <permission-edit></permission-edit>
+    <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow">Impressum</a>
+    <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow">Datenschutz</a>
+</body>
+
+</html>

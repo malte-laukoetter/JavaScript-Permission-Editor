@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="yaml-js" attributes="yaml, js, mode">
+    <script src="../../scripts/js-yaml.min.js"></script>
+    <script>
+        (function () {
+            Polymer("yaml-js",{
+                yamlChanged: function(oldVal, newVal) {
+                    if(this.mode == "tojs"){
+                        this.js = jsyaml.load(this.yaml);
+                        console.log("A");
+                    
+                        this.fire('core-ready');
+                    }
+                },
+                
+                jsChanged: function(oldVal, newVal) {
+                    if(this.mode == "toyaml"){
+                        this.yaml = jsyaml.dump(newVal);
+                    }
+                }
+            });
+        })();
+    </script>
+</polymer-element>
