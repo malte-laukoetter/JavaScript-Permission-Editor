@@ -3,3 +3,15 @@ body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
+
+paper-tabs::shadow #selectionBar {
+  background-color: #FFEB3B;
+}
+
+paper-tabs paper-tab::shadow #ink {
+  color: #1976D2;
+}
+
+paper-tabs {
+    background-color: #2196F3;
+}

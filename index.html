@@ -24,7 +24,7 @@
 <body unresolved layout vertical>
     <polymer-element name="permission-edit">
         <template>
-            
+            <link rel="stylesheet" href="styles/main.css">
             <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{permissions}}" on-core-response="{{test}}"></core-ajax>
             <button on-tap="{{openimportfkt}}">Import</button>
             
@@ -47,6 +47,44 @@
             
             
             
+            
+            <paper-tabs selected="{{selectedVersion}}">
+                <paper-tab>Old View</paper-tab>
+                <paper-tab>AnonymusChaotics Idee</paper-tab>
+            </paper-tabs>
+            <template if="{{selectedVersion}}">
+                <div layout horizontal>
+                    <div style="width:15%">
+                    <core-selector selected="{{SelectedGroup}}">
+                        <template repeat="{{group in groups}}">
+                            <paper-item>{{group.name}}</paper-item>
+                        </template>
+                    </core-selector>
+                </div>
+                <div style="width:15%">
+                    <core-selector selected="{{SelectedPlugin}}">
+                        <template repeat="{{plugin, index in permissions}}">
+                            <paper-item>{{plugin.plugin}}</paper-item>
+                        </template>
+                    </core-selector>
+                </div>
+                <div>
+                    <template if="{{SelectedGroup != undefined}}" repeat="{{permission in permissions[SelectedPlugin].permissions}}">
+                        <div style="margin-top:5px" class="item" layout horizontal>
+
+                                <paper-checkbox checked?="{{groups[SelectedGroup].permissions[plugin.plugin][permission.name]}}" on-change="{{checkboxchanged}}"></paper-checkbox>   
+                                <div style="width:200px; margin-left: 5px">
+                                {{permissions[SelectedPlugin].plugin}}.{{permission.name}}
+                                </div>
+                                {{permission.description}}
+                                </div>
+
+                    </template>
+                    </div>
+                </div> 
+            </template>
+            
+            <template if="{{!selectedVersion}}">
             <div layout horizontal>
                 <div style="width:15%"></div>
                 <template repeat="{{group in groups}}" layout horizontal>
@@ -92,7 +130,7 @@
                     </template>
                 </core-collapse>
             </template>
-            
+            </template>
         </template>
 
         <!-- build:js scripts/app.js -->

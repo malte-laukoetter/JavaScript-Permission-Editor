@@ -1,4 +1,5 @@
 Polymer('permission-edit',{
+    selectedVersion: 0,
     loadPermissions: function() {
         this.groups = [];
         for(group in this.jsnew.groups){
@@ -72,10 +73,10 @@ Polymer('permission-edit',{
     },
     
     checkboxchanged: function(e) {
-        plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
-        pluginindex = e.target.templateInstance.model.__proto__.index;
-        permission = e.target.templateInstance.model.__proto__.permission;
-        group = e.target.templateInstance.model.group;
+        var plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
+        var pluginindex = e.target.templateInstance.model.__proto__.index;
+        var permission = e.target.templateInstance.model.__proto__.permission;
+        var group = e.target.templateInstance.model.group;
         
         if(!group.permissions[plugin]) group.permissions[plugin] = {};  
         
@@ -104,7 +105,7 @@ Polymer('permission-edit',{
     
     allcheckboxchanged: function(e) {
         var plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
-        pluginindex = e.target.templateInstance.model.__proto__.index;
+        var pluginindex = e.target.templateInstance.model.__proto__.index;
         var group = e.target.templateInstance.model.group;
         
         if(!group.permissions[plugin]) group.permissions[plugin] = {};
