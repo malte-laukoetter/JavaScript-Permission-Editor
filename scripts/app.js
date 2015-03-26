@@ -2,6 +2,7 @@ Polymer('permission-edit',{
     loadPermissions: function() {
         this.groups = [];
         for(group in this.jsnew.groups){
+            console.log(group)
             var index = this.groups.push(this.jsnew.groups[group]);
             this.groups[index-1].name = group;
        
@@ -12,7 +13,8 @@ Polymer('permission-edit',{
                 var split = this.groups[index-1].permissions[i].split(".");
                 var pluginrow = split[0];
                 var plugin = pluginrow.replace(/-/, '');
-                var permission = split.slice(1).join('.');
+                var permission = {};
+                permission.name = split.slice(1).join('.');
                 var pluginid = 0;
                 
                 var k = 0;
@@ -29,8 +31,6 @@ Polymer('permission-edit',{
                     this.groups[index-1].permissions_new[plugin] = {};
                     
                     
-                    console.log(k + ':' + this.permissions.length);
-                    
                     if(k > this.permissions.length){
                         pluginid = k;
                         this.permissions[pluginid] = {};
@@ -43,12 +43,12 @@ Polymer('permission-edit',{
                 
                 k = 0;
                 for(var j = 0; j < this.permissions[pluginid].permissions.length; j++){
-                    if(this.permissions[pluginid].permissions[j] !== permission){
+                    if(this.permissions[pluginid].permissions[j].name !== permission.name){
                         k++;
                     }
                 }
-                console.log(k + ':' + this.permissions[pluginid].permissions.length);
-                if(k >= this.permissions[pluginid].permissions.length && permission !== '*' && permission !== ''){
+
+                if(k >= this.permissions[pluginid].permissions.length && permission.name !== '*' && permission.name !== '' && permission.name !== undefined){
                     this.permissions[pluginid].permissions.push(permission);
                 }
             }
@@ -61,7 +61,7 @@ Polymer('permission-edit',{
     },
     
     toggle: function(e) {
-        this.$["collapse" + e.path[0].outerText].toggle();
+        this.permissions[e.path[1].childNodes[2].innerText].toggle = !this.permissions[e.path[1].childNodes[2].innerText].toggle;
     },
     
     alltrue: function(data) {
@@ -74,29 +74,28 @@ Polymer('permission-edit',{
     checkboxchanged: function(e) {
         plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
         pluginindex = e.target.templateInstance.model.__proto__.index;
-        permission = e.target.templateInstance.model.__proto__.permisson;
+        permission = e.target.templateInstance.model.__proto__.permission;
         group = e.target.templateInstance.model.group;
         
+        if(!group.permissions[plugin]) group.permissions[plugin] = {};  
         
-        if(!group.permissions[plugin]) group.permissions[plugin] = {};
-        
-        group.permissions[plugin][permission] = !group.permissions[plugin][permission];
+        group.permissions[plugin][permission.name] = !group.permissions[plugin][permission.name];
         
         var truepermissions = 0;
         
         var permissionlist = this.permissions[pluginindex].permissions;
         
-        for(var permission in permissionlist){
-            if(group.permissions[plugin].hasOwnProperty(permissionlist[permission])){
-                if(group.permissions[plugin][permissionlist[permission]] == true && !group.permissions[plugin]['*']){
+        for(var i = 0; i < permissionlist.length; i++){
+            if(group.permissions[plugin].hasOwnProperty(permissionlist[i].name)){
+                if(group.permissions[plugin][permissionlist[i].name] == true && !group.permissions[plugin]['*']){
                     truepermissions++;
                 }
             }else{
-                group.permissions[plugin][permissionlist[permission]] == false
+                group.permissions[plugin][permissionlist[i].name] == false;
             }
         }
-
-        if(truepermissions >= Object.keys(this.permissions[pluginindex].permissions).length){
+        
+        if(truepermissions >= permissionlist.length){
             group.permissions[plugin]['*'] = true;
         }else{
             group.permissions[plugin]['*'] = false;
@@ -115,8 +114,8 @@ Polymer('permission-edit',{
         
         var permissionlist = this.permissions[pluginindex].permissions;
         
-        for(var permission in permissionlist){
-            group.permissions[plugin][permissionlist[permission]] = newState;
+        for(var i = 0; i < permissionlist.length; i++){
+            group.permissions[plugin][permissionlist[i].name] = newState;
         }
     },
     
@@ -127,17 +126,18 @@ Polymer('permission-edit',{
                 if(this.groups[group].permissions[plugin]['*']){
                     stateall = this.groups[group].permissions[plugin]['*'];
                     
+                    var permissionlist = [];
+                    
                     for(var j = 0; j < this.permissions.length; j++){
                         if(this.permissions[j].plugin == plugin){
-                            var permissionlist = this.permissions[j].permissions;
+                            permissionlist = this.permissions[j].permissions;
                             break;
                         }
                     }
 
-                    for(var permission in permissionlist){                  
-                        if(typeof this.groups[group].permissions[plugin][permissionlist[permission]] == 'undefined'){
-                            this.groups[group].permissions[plugin][permissionlist[permission]] = stateall;
-                            
+                    for(var j = 0; j < permissionlist.length; j++){  
+                        if(typeof this.groups[group].permissions[plugin][permissionlist[j].name] == 'undefined'){
+                            this.groups[group].permissions[plugin][permissionlist[j].name] = stateall;
                         }else{
                             this.groups[group].permissions[plugin]['*'] = false;
                         }
@@ -171,68 +171,77 @@ Polymer('permission-edit',{
         }
     },
 
-    'permissions': [
-        {
-            plugin: "essentials",
-            permissions:[
-                'xmppspy',
-                'xmpp',
-                'worth',
-                'world',
-                'workbench',
-                'whois',
-                'weather',
-                'warps.*',
-                'warp.overwrite.*',
-                'warp.otherplayers',
-                'warp.list',
-                'warp',
-                'vanish.see',
-                'vanish.pvp',
-                'vanish.others',
-                'vanish.interact',
-                'vanish.effect',
-                'vanish',
-                'unlimited.others',
-                'unlimited.item-bucket',
-                'unlimited.item-all',
-                'unlimited',
-                
-            ]
-        },
-        {
-            plugin: "chestlock",
-            permissions:[
-                'openown',
-                'openall',
-                'place',
-                'destoryown',
-                'destoryall'
-            ]
-        },
+    permissions: [
         {
             plugin: "lagg",
+            toggle: false,
             permissions:[
-                'clear',
-                'check',
-                'reload',
-                'killmobs',
-                'area',
-                'unloadchunks',
-                'chunk',
-                'tpchunk',
-                'admin',
-                'gc',
-                'tps',
-                'halt',
-                'help'
+                {
+                    name: 'clear',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'check',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'reload',
+                    description: 'reloads the plugin'
+                },
+                {
+                    name: 'killmobs',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'area',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'unloadchunks',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'chunk',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'tpchunk',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'admin',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'gc',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'tps',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'halt',
+                    description: 'behebt laggs'
+                },
+                {
+                    name: 'help',
+                    description: 'behebt laggs'
+                }
             ]
         },
         {
             plugin: "modifyworld",
+            toggle: false,
             permissions:[
-                'chat',
-                'spam'
+                {
+                    name: 'chat',
+                    description: 'erlaupt das chaten'
+                },
+                {
+                    name: 'spam',
+                    description: 'erlaupt das spammen'
+                }
             ]
         }
     ],
@@ -276,7 +285,13 @@ Polymer('permission-edit',{
                 }
             }
         }
-    ]
+    ],
+    openimportfkt: function() {
+        this.openimport = !this.openimport;
+    },
+    openexportfkt: function() {
+        this.openexport = !this.openexport;
+    }
 });
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-60277501-2']);

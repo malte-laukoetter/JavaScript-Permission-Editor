@@ -1,0 +1,90 @@
+[
+    {
+        "plugin": "lagg",
+        "toggle": false,
+        "permissions":[
+            {
+                "name": "clear",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "check",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "reload",
+                "description": "reloads the plugin"
+            },
+            {
+                "name": "killmobs",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "area",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "unloadchunks",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "chunk",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "tpchunk",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "admin",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "gc",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "tps",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "halt",
+                "description": "behebt laggs"
+            },
+            {
+                "name": "help",
+                "description": "behebt laggs"
+            }
+        ]
+    },
+    
+    {
+        "plugin": "modifyworld",
+        "toggle": false,
+        "permissions":[
+            {
+                "name": "chat",
+                "description": "erlaupt das chaten"
+            },
+            {
+                "name": "spam",
+                "description": "erlaupt das spammen"
+            }
+        ]
+    },
+    
+    {
+        "plugin": "essentials",
+        "toggle": false,
+        "permissions":[
+            {
+                "name": "xmppspy",
+                "description": "erlaupt das spammen"
+            },
+            {
+                "name": "xmpp",
+                "description": "erlaupt das spammen"
+            }
+        ]
+    }
+]

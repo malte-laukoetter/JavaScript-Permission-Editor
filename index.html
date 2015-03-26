@@ -24,13 +24,28 @@
 <body unresolved layout vertical>
     <polymer-element name="permission-edit">
         <template>
-
-            <textarea value="{{yaml}}" placeholder="Import"></textarea>
-            <textarea value="{{yamlnew}}" placeholder="Export"></textarea>
-            <button on-tap="{{save}}">Export</button>
+            
+            <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{permissions}}" on-core-response="{{test}}"></core-ajax>
+            <button on-tap="{{openimportfkt}}">Import</button>
+            
+            <paper-dialog transition="core-transition-top" opened="{{openimport}}">
+                <div style="height: 80vh;width:80vw">
+                    <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="Import"></textarea>
+                </div>
+            </paper-dialog>
+            
+            <button on-tap="{{save}}{{openexportfkt}}">Export</button>
+            
+            <paper-dialog transition="core-transition-top" opened="{{openexport}}">
+                <div style="height: 80vh;width:80vw">
+                    <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="Export"></textarea>
+                </div>
+            </paper-dialog>
       
             <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
             <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml" on-core-ready="{{loadPermissions}}"></yaml-js>
+            
+            
             
             <div layout horizontal>
                 <div style="width:15%"></div>
@@ -45,7 +60,7 @@
                     <hr>
                     <div layout horizontal>
                         <div style="width:15%" on-click="{{toggle}}">
-                            <b>{{plugin.plugin}}</b>
+                            <b>{{plugin.plugin}}</b><span style="display:none">{{index}}</span>
                         </div>
                         <template repeat="{{group in groups}}">
                             <div flex>  
@@ -56,14 +71,20 @@
                         </template>
                     </div>
                 </div>
-                <core-collapse id="collapse{{plugin.plugin}}">
-                    <template repeat="{{permisson in plugin.permissions}}">
+                <core-collapse opened?="{{plugin.toggle}}">
+                    <template repeat="{{permission in plugin.permissions}}">
                         <div class="item" layout horizontal>
-                            <div style="width:15%">{{plugin.plugin}}.{{permisson}}</div>
+                            
+                            <div style="width:15%">
+                                <core-tooltip label="{{permission.description}}" position="right">
+                                    {{plugin.plugin}}.{{permission.name}}
+                                </core-tooltip>
+                            </div>
+                           
                             <template repeat="{{group in groups}}">
                                 <div flex>
-                                    <core-tooltip label="{{plugin.plugin}}.{{permisson}}" position="right">
-                                        <paper-checkbox checked?="{{group.permissions[plugin.plugin][permisson]}}" on-change="{{checkboxchanged}}"></paper-checkbox>
+                                    <core-tooltip label="{{plugin.plugin}}.{{permission.name}}" position="right">
+                                        <paper-checkbox checked?="{{group.permissions[plugin.plugin][permission.name]}}" on-change="{{checkboxchanged}}"></paper-checkbox>
                                     </core-tooltip>
                                 </div>
                             </template>
@@ -78,7 +99,7 @@
         <script src="scripts/app.js"></script>
         <!-- endbuild-->
     </polymer-element>
-    <permission-edit></permission-edit>
+    <permission-edit id="pedit"></permission-edit>
     <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow">Impressum</a>
     <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow">Datenschutz</a>
 </body>
