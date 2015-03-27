@@ -74,18 +74,18 @@
                     </div>
                     <div>
                         <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
-                            <div style="margin-top:5px" class="item" layout horizontal on-tap="{{allcheckboxchanged}}">
+                            <div class="permission item" layout horizontal on-tap="{{allcheckboxchanged}}">
                                 <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin]['*']}}"></paper-checkbox>
                                 
-                                <div style="width:200px; margin-left: 5px">
+                                <div class="key">
                                     {{permissions[SelectedPlugin].plugin}}.*
                                 </div>
                                 Wähl alle Permissions des Plugins aus.
                             </div>
                             <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
-                                <div style="margin-top:5px" class="item" layout horizontal on-tap="{{checkboxchanged}}">
+                                <div class="permission item" layout horizontal on-tap="{{checkboxchanged}}">
                                     <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
-                                    <div style="width:200px; margin-left: 5px">
+                                    <div class="key">
                                         {{permissions[SelectedPlugin].plugin}}.{{permission.name}}
                                     </div>
                                     {{permission.description}}

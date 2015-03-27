@@ -40,6 +40,17 @@ paper-item.core-selected {
     bottom: 0px;
 }
 
+.permission{
+    margin-top:5px;
+}
+.permission .key{
+    width:200px; 
+    margin-left: 5px;
+}
+.permission:hover{
+    font-weight: bolder
+}
+
 .mainlayout{
     display: -ms-flexbox;
     display: -webkit-flex;
