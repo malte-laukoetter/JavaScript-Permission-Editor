@@ -1,9 +1,9 @@
 Polymer('permission-edit',{
-    selectedVersion: 0,
+    selectedVersion: 1,
+    
     loadPermissions: function() {
         this.groups = [];
         for(group in this.jsnew.groups){
-            console.log(group)
             var index = this.groups.push(this.jsnew.groups[group]);
             this.groups[index-1].name = group;
        
@@ -16,6 +16,7 @@ Polymer('permission-edit',{
                 var plugin = pluginrow.replace(/-/, '');
                 var permission = {};
                 permission.name = split.slice(1).join('.');
+                permission.description = "unbekannt";
                 var pluginid = 0;
                 
                 var k = 0;
@@ -27,12 +28,11 @@ Polymer('permission-edit',{
                         break;
                     }
                 }
-                
+
                 if(!this.groups[index-1].permissions_new[plugin]){
                     this.groups[index-1].permissions_new[plugin] = {};
-                    
-                    
-                    if(k > this.permissions.length){
+
+                    if(k >= this.permissions.length){
                         pluginid = k;
                         this.permissions[pluginid] = {};
                         this.permissions[pluginid].plugin = plugin;
@@ -40,7 +40,7 @@ Polymer('permission-edit',{
                     }
                 }
                 
-                this.groups[index-1].permissions_new[plugin][permission] = ((pluginrow.charAt(0) == '-')?false:true);
+                this.groups[index-1].permissions_new[plugin][permission.name] = ((pluginrow.charAt(0) == '-')?false:true);
                 
                 k = 0;
                 for(var j = 0; j < this.permissions[pluginid].permissions.length; j++){
@@ -65,18 +65,11 @@ Polymer('permission-edit',{
         this.permissions[e.path[1].childNodes[2].innerText].toggle = !this.permissions[e.path[1].childNodes[2].innerText].toggle;
     },
     
-    alltrue: function(data) {
-        console.log(data);
-        for(var i = 0; i < data.length; i++){
-            console.log(data[i]);
-        }  
-    },
-    
     checkboxchanged: function(e) {
-        var plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
-        var pluginindex = e.target.templateInstance.model.__proto__.index;
-        var permission = e.target.templateInstance.model.__proto__.permission;
-        var group = e.target.templateInstance.model.group;
+        var pluginindex = e.target.templateInstance.model.__proto__.SelectedPlugin;
+        var plugin = this.permissions[pluginindex].plugin;
+        var permission = e.target.templateInstance.model.permission;
+        var group = this.groups[e.target.templateInstance.model.__proto__.SelectedGroup];
         
         if(!group.permissions[plugin]) group.permissions[plugin] = {};  
         
@@ -104,14 +97,14 @@ Polymer('permission-edit',{
     },
     
     allcheckboxchanged: function(e) {
-        var plugin = e.target.templateInstance.model.__proto__.plugin.plugin;
-        var pluginindex = e.target.templateInstance.model.__proto__.index;
-        var group = e.target.templateInstance.model.group;
+        var pluginindex = this.SelectedPlugin;
+        var plugin = this.permissions[pluginindex].plugin;
+        var group = this.groups[this.SelectedGroup];
         
         if(!group.permissions[plugin]) group.permissions[plugin] = {};
         
         var newState = !group.permissions[plugin]['*'];
-        group.permissions[plugin]['*'] = newState
+        group.permissions[plugin]['*'] = newState;
         
         var permissionlist = this.permissions[pluginindex].permissions;
         
@@ -292,7 +285,59 @@ Polymer('permission-edit',{
     },
     openexportfkt: function() {
         this.openexport = !this.openexport;
-    }
+    },
+    openaddgroupfkt: function(){
+        this.openaddgroup = !this.openaddgroup;
+    },
+    openaddpluginfkt: function(){
+        this.openaddplugin = !this.openaddplugin;
+    },
+    newGroup: {
+        namevalid: true
+    },
+    addGroup:  function(){
+                            
+            console.log(this.newGroup)
+            if(this.newGroup.import){
+                var newGroup = JSON.parse(JSON.stringify(this.groups[this.newGroup.import - 1]));
+            }else{
+                var newGroup = {};
+            }
+        
+            if(!this.newGroup.name){
+                this.newGroup.namevalid = false;
+                return false;
+            }
+            
+            for(var i = 0; i < this.groups.length; i++){
+                if(this.newGroup.name == this.groups[i].name){
+                    this.newGroup.namevalid = false;
+                    return false;
+                }
+            }
+        
+            if(this.newGroup.prefix || this.newGroup.suffix || this.newGroup.rank || this.newGroup.default){ 
+                newGroup.options = {};
+            }
+            newGroup.name = this.newGroup.name;
+        
+            if (this.newGroup.prefix){ newGroup.options.prefix = this.newGroup.prefix};
+            if (this.newGroup.suffix){ newGroup.options.suffix = this.newGroup.suffix};
+            if (this.newGroup.rank){ newGroup.options.rank = this.newGroup.rank};
+            if (this.newGroup.default){ newGroup.options.default = this.newGroup.default};
+        
+            if(newGroup.options && newGroup.options.default){
+                for(var i = 0; i < this.groups.length; i++){
+                    if(this.groups[i].options){
+                        this.groups[i].options.default = false;
+                    }
+                }
+            }
+        
+            this.groups.push(newGroup);
+        
+            this.openaddgroupfkt();
+        }
 });
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-60277501-2']);

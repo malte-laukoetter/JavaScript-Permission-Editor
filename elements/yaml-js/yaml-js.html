@@ -8,8 +8,6 @@
                 yamlChanged: function(oldVal, newVal) {
                     if(this.mode == "tojs"){
                         this.js = jsyaml.load(this.yaml);
-                        console.log("A");
-                    
                         this.fire('core-ready');
                     }
                 },
