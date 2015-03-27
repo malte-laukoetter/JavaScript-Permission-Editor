@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Permissioneditor 0.1.3</title>
+  <title>Permissioneditor 0.1.4</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- build:css styles/main.css -->
@@ -26,18 +26,18 @@
         <template>
             <link rel="stylesheet" href="styles/main.css">
             <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{permissions}}" on-core-response="{{test}}"></core-ajax>
-            <button on-tap="{{openimportfkt}}">Import</button>
+            
             
             <paper-dialog transition="core-transition-top" opened="{{openimport}}">
-                <div style="height: 80vh;width:80vw">
+                <div style="height: 75vh;width:75vw">
                     <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="Import"></textarea>
                 </div>
             </paper-dialog>
             
-            <button on-tap="{{save}}{{openexportfkt}}">Export</button>
+            
             
             <paper-dialog transition="core-transition-top" opened="{{openexport}}">
-                <div style="height: 80vh;width:80vw">
+                <div style="height: 75vh;width:75vw">
                     <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="Export"></textarea>
                 </div>
             </paper-dialog>
@@ -45,101 +45,109 @@
             <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
             <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml" on-core-ready="{{loadPermissions}}"></yaml-js>
             
-            
-            
-            
-            <paper-tabs selected="{{selectedVersion}}">
-                <paper-tab>Old View</paper-tab>
-                <paper-tab>AnonymusChaotics Idee</paper-tab>
-            </paper-tabs>
             <template if="{{selectedVersion}}">
-                <div layout horizontal>
-                    <div style="width:15%">
-                    <core-selector selected="{{SelectedGroup}}">
-                        <template repeat="{{group in groups}}">
-                            <paper-item>{{group.name}}</paper-item>
-                        </template>
-                    </core-selector>
-                </div>
-                <div style="width:15%">
-                    <core-selector selected="{{SelectedPlugin}}">
-                        <template repeat="{{plugin, index in permissions}}">
-                            <paper-item>{{plugin.plugin}}</paper-item>
-                        </template>
-                    </core-selector>
-                </div>
                 <div>
-                    <template if="{{SelectedGroup != undefined}}" repeat="{{permission in permissions[SelectedPlugin].permissions}}">
-                        <div style="margin-top:5px" class="item" layout horizontal>
-
-                                <paper-checkbox checked?="{{groups[SelectedGroup].permissions[plugin.plugin][permission.name]}}" on-change="{{checkboxchanged}}"></paper-checkbox>   
-                                <div style="width:200px; margin-left: 5px">
-                                {{permissions[SelectedPlugin].plugin}}.{{permission.name}}
-                                </div>
-                                {{permission.description}}
-                                </div>
-
-                    </template>
+                        <paper-button raised on-tap="{{openimportfkt}}">Import</paper-button>
+                        <paper-button raised on-tap="{{save}}{{openexportfkt}}">Export</paper-button>
+                        <paper-button raised on-tap="{{openaddgroupfkt}}">Gruppe hinzufügen</paper-button>
+                        <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">Plugin hinzufügen</paper-button>
                     </div>
-                </div> 
-            </template>
-            
-            <template if="{{!selectedVersion}}">
-            <div layout horizontal>
-                <div style="width:15%"></div>
-                <template repeat="{{group in groups}}" layout horizontal>
-                    <div flex>{{group.name}}</div>
-                </template>
-            </div>
-            
-            <template repeat="{{plugin, index in permissions}}">
                 
-                <div divider class="divider row">
-                    <hr>
-                    <div layout horizontal>
-                        <div style="width:15%" on-click="{{toggle}}">
-                            <b>{{plugin.plugin}}</b><span style="display:none">{{index}}</span>
-                        </div>
-                        <template repeat="{{group in groups}}">
-                            <div flex>  
-                                <core-tooltip label="{{plugin.plugin}}.*" position="right">
-                                    <paper-checkbox checked?="{{group.permissions[plugin.plugin]['*']}}" on-change="{{allcheckboxchanged}}"></paper-checkbox>
-                                </core-tooltip>
-                            </div>
-                        </template>
+                <div class="mainlayout">
+                    <div class="buttonlist">          
+                        <paper-shadow>
+                            <core-selector selected="{{SelectedGroup}}">
+                                <template repeat="{{group in groups}}">
+                                    <paper-item style="margin-top: 2px">{{group.name}}</paper-item>
+                                </template>
+                            </core-selector>
+                        </paper-shadow>
                     </div>
-                </div>
-                <core-collapse opened?="{{plugin.toggle}}">
-                    <template repeat="{{permission in plugin.permissions}}">
-                        <div class="item" layout horizontal>
-                            
-                            <div style="width:15%">
-                                <core-tooltip label="{{permission.description}}" position="right">
-                                    {{plugin.plugin}}.{{permission.name}}
-                                </core-tooltip>
+                    <div class="buttonlist">
+                        <paper-shadow>
+                            <core-selector selected="{{SelectedPlugin}}">
+                                <template repeat="{{plugin, index in permissions}}">
+                                    <paper-item style="margin-top: 2px">{{plugin.plugin}}</paper-item>
+                                </template>
+                            </core-selector>
+                        </paper-shadow>
+                    </div>
+                    <div>
+                        <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
+                            <div style="margin-top:5px" class="item" layout horizontal on-tap="{{allcheckboxchanged}}">
+                                <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin]['*']}}"></paper-checkbox>
+                                
+                                <div style="width:200px; margin-left: 5px">
+                                    {{permissions[SelectedPlugin].plugin}}.*
+                                </div>
+                                Wähl alle Permissions des Plugins aus.
                             </div>
-                           
-                            <template repeat="{{group in groups}}">
-                                <div flex>
-                                    <core-tooltip label="{{plugin.plugin}}.{{permission.name}}" position="right">
-                                        <paper-checkbox checked?="{{group.permissions[plugin.plugin][permission.name]}}" on-change="{{checkboxchanged}}"></paper-checkbox>
-                                    </core-tooltip>
+                            <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
+                                <div style="margin-top:5px" class="item" layout horizontal on-tap="{{checkboxchanged}}">
+                                    <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
+                                    <div style="width:200px; margin-left: 5px">
+                                        {{permissions[SelectedPlugin].plugin}}.{{permission.name}}
+                                    </div>
+                                    {{permission.description}}
                                 </div>
                             </template>
-                        </div>
-                    </template>
-                </core-collapse>
+                        </template>
+                    </div>
+                </div> 
+                
+                
+                
+                <!--Dialoge-->
+                
+                <paper-dialog transition="core-transition-top" header="Gruppe hinzufügen" opened="{{openaddgroup}}">
+                    <div id="addgroup" layout vertical>
+                        <paper-input-decorator floatingLabel label="Gruppen Name" isInvalid?="{{!newGroup.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                            <input value="{{newGroup.name}}" is="core-input">
+                        </paper-input-decorator>
+                        <paper-input-decorator floatingLabel label="Prefix" isInvalid?="{{newGroup.prefixvalid}}" error="Error">
+                            <input is="core-input" value="{{newGroup.prefix}}">
+                        </paper-input-decorator>
+                        <paper-input-decorator floatingLabel label="Suffix" isInvalid?="{{newGroup.suffixvalid}}" error="Error">
+                            <input is="core-input" value="{{newGroup.suffix}}">
+                        </paper-input-decorator>
+                        <paper-input-decorator floatingLabel label="rank" isInvalid?="{{!$.inputrank.validity.valid}}" error="Rank muss eine Zahl sein">
+                            <input id="inputrank" value="{{newGroup.rank}}" type="number" is="core-input" pattern="^[0-9]*">
+                        </paper-input-decorator>
+
+                        <paper-dropdown-menu label="Gruppe kopieren">
+                            <paper-dropdown class="dropdown">
+                                <core-menu class="menu" selected="{{newGroup.import}}">
+                                    <paper-item>keine</paper-item>
+                                    <template repeat="{{group in groups}}">
+                                        <paper-item>{{group.name}}</paper-item>
+                                    </template>
+                                </core-menu>
+                            </paper-dropdown>
+                        </paper-dropdown-menu>
+
+                        <paper-button raised toggle active="{{newGroup.default}}">Default</paper-button>
+                        <br>
+                        <paper-button raised on-tap="{{addGroup}}">Hinzufügen</paper-button>
+                    </div>
+                </paper-dialog>
             </template>
-            </template>
+            
+            <paper-dialog transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddplugin}}">
+                <div style="height: 75vh;width:75vw">
+                    bla bla bla
+                </div>
+            </paper-dialog>
         </template>
 
         <!-- build:js scripts/app.js -->
         <script src="scripts/app.js"></script>
         <!-- endbuild-->
     </polymer-element>
-    <permission-edit id="pedit"></permission-edit>
-    <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow">Impressum</a>
-    <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow">Datenschutz</a>
+    <permission-edit></permission-edit>
+    <div class="imprint">
+        <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow">Impressum</a>
+        <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow">Datenschutz</a>
+    </div>
 </body>
 
 </html>

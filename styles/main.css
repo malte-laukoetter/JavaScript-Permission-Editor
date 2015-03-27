@@ -15,3 +15,47 @@ paper-tabs paper-tab::shadow #ink {
 paper-tabs {
     background-color: #2196F3;
 }
+
+paper-item {
+    background-color: #2196F3;
+}
+paper-item:hover {
+    background-color: #1976D2;
+}
+paper-button:hover {
+    color: #1976D2
+}
+paper-item.core-selected {
+    background-color: #1976D2;
+}
+
+.buttonlist{
+    width:15%;
+    min-width:200px;
+    margin-right: 4px;
+}
+
+.imprint{
+    position: fixed;
+    bottom: 0px;
+}
+
+.mainlayout{
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+}
+
+@media only screen and (max-width : 601px) {
+  .mainlayout {
+      -ms-flex-direction: column;
+      -webkit-flex-direction: column;
+     flex-direction: column;
+  }
+    .buttonlist{
+              margin-bottom: 10px
+    }
+ }
