@@ -1,82 +1,126 @@
-//test if works with permissions added by import of permissionsfile
-//change plugins.json to new format
-
 Polymer('permission-edit',{
-    selectedVersion: 1,
     
+    /*
+    function for loading permissions from a permissions.yml
+    */
     loadPermissions: function() {
+        //clear all exsisting groups
         this.groups = [];
         for(group in this.jsnew.groups){
+            //add the new group to the groups array
             var index = this.groups.push(this.jsnew.groups[group]);
+            //set the name of the group
             this.groups[index-1].name = group;
        
+            //add a clear permissions object to the group
             this.groups[index-1].permissions_new = {};
             
             for(var i = 0; i < this.groups[index-1].permissions.length; i++){
-                
-                var split = this.groups[index-1].permissions[i].split(".");
-                var pluginrow = split[0];
+
+                //save the unedited plugin
+                var pluginrow = this.groups[index-1].permissions[i].split(".")[0];
+                //get the name of the plugin (the main key of the permission)
                 var plugin = pluginrow.replace(/-/, '');
+                //create a clear permissions object
                 var permission = {};
-                permission.name = this.groups[index-1].permissions[i];
-                permission.description = "unbekannt";
-                var pluginid = 0;
+                //add the name to the permission
+                permission.name = this.groups[index-1].permissions[i].replace(/-/, '');
                 
+                //a variable for the pluginid
+                var pluginid = 0;
+                //couter
                 var k = 0;
+                //search for the plugin in the permissions array
                 for(var j = 0; j < this.permissions.length; j++){
                     if(this.permissions[j].plugin !== plugin) {
+                        //count +1 for every plugin that is not the same as the searched
                         k++;
                     }else{
+                        //set the pluginid if the plugin is the searched plugin
                         pluginid = j;
                         break;
                     }
                 }
 
+                //test if already a plugin of the name is registerd in the groups permissions
                 if(!this.groups[index-1].permissions_new[plugin]){
+                    //create it if not
                     this.groups[index-1].permissions_new[plugin] = {};
 
+                    //and create a new plugin
                     if(k >= this.permissions.length){
+                        //set the plugin id to k (eg. the next higher id of the permission array)
                         pluginid = k;
+                        //create a new object in this
                         this.permissions[pluginid] = {};
+                        //set the name to the plugin key
                         this.permissions[pluginid].plugin = plugin;
+                        //add a clear array for the permissions
                         this.permissions[pluginid].permissions = [];
                     }
                 }
                 
+                //set the value of the permission
                 this.groups[index-1].permissions_new[plugin][permission.name] = ((pluginrow.charAt(0) == '-')?false:true);
                 
+                //reset the counter
                 k = 0;
+                
                 for(var j = 0; j < this.permissions[pluginid].permissions.length; j++){
                     if(this.permissions[pluginid].permissions[j].name !== permission.name){
+                        //count +1 for every permission thats not the same as the searchet
                         k++;
                     }
                 }
 
-                if(k >= this.permissions[pluginid].permissions.length && permission.name !== '*' && permission.name !== '' && permission.name !== undefined){
+                //add the permission if the permission isn't there and isn't undefined
+                if(k >= this.permissions[pluginid].permissions.length && permission.name !== '' && permission.name !== undefined){
                     this.permissions[pluginid].permissions.push(permission);
                 }
             }
             
+            //copy the new permissions to the permissions key
             this.groups[index-1].permissions = this.groups[index-1].permissions_new;
+            //delet the new permission key
             delete this.groups[index-1].permissions_new;
         }
         
+        //call the ready function for some outher inits
         this.ready();
+        
+        //add the import to ga stat
+        _gaq.push(['_trackPageview', '#stat/import']); 
     },
     
+    /*
+    methode that changed the value of a checkbox and called the setoutherpermissions methode
+    */
     checkboxchanged: function(e) {
+        //get some data frome the html code
         var pluginindex = e.target.templateInstance.model.__proto__.SelectedPlugin;
         var plugin = this.permissions[pluginindex].plugin;
         var permission = e.target.templateInstance.model.permission;
         var group = this.groups[e.target.templateInstance.model.__proto__.SelectedGroup];
         
+        //test if the group has a permission of the plugin else create a clear object to save these permissions at
         if(!group.permissions[plugin]) group.permissions[plugin] = {};  
         
+        //reverse the value of the permission
         group.permissions[plugin][permission.name] = !group.permissions[plugin][permission.name];
         
+        //call the methode for setting related permissions
         this.setoutherpermissions(plugin,pluginindex,permission.name,group);
     },
     
+    /*
+    methode that sets outher permissions that are related to the given one
+    
+    @param  plugin       the plugin that the permission is related to
+    @param  pluginindex  the index of the plugin in the permissions array
+    @param  permission   the name of the permission
+    @param  group        the group of the change
+    @param  notsetchilds optional true: only the parent permissions are setted
+    */
     setoutherpermissions: function(plugin,pluginindex,permission,group,notsetchilds){
         for(var i = 0; i < this.permissions[pluginindex].permissions.length; i++){
             if(this.permissions[pluginindex].permissions[i].name == permission){
@@ -150,6 +194,8 @@ Polymer('permission-edit',{
             delete this.js.groups[group.name].permissions_new;
             delete this.js.groups[group.name].name;
         }
+        
+        _gaq.push(['_trackPageview', '#stat/export']); 
     },
 
     permissions: [],
@@ -175,19 +221,47 @@ Polymer('permission-edit',{
         }
     ],
     openimportfkt: function() {
-        this.openimport = !this.openimport;
+        this.openimport = true;
     },
     openexportfkt: function() {
-        this.openexport = !this.openexport;
+        this.openexport = true;
     },
     openaddgroupfkt: function(){
-        this.openaddgroup = !this.openaddgroup;
+        this.openaddgroup = true;
     },
     openaddpluginfkt: function(){
-        this.openaddplugin = !this.openaddplugin;
+        this.openaddplugin = true;
     },
     openaddpluginbyfilefkt: function(){
-        this.openaddpluginbyfile = !this.openaddpluginbyfile;
+        this.openaddpluginbyfile = true;
+    },
+    openeditgroupfkt : function(e){
+        this.openeditgroup = true;
+        this.editgroup = e.target.templateInstance.model.group;
+        if(this.editgroup.options){
+            this.$.editdefaultbutton.active = this.editgroup.options.default;
+            this.$.editdefaultbutton.toggleBackground();
+        }
+    },
+    changeGroupsDefault : function(){
+        
+        if(!this.editgroup.options){
+            this.editgroup.options = {}
+        }
+        
+        if(!this.editgroup.options.default){
+            for(var i = 0; i < this.groups.length; i++){
+                if(this.groups[i].name != this.editgroup.name){
+                    if(!this.groups[i].options){this.groups[i].options = {}}
+                    this.groups[i].options.default = false;
+                }
+            }
+            this.$.editdefaultbutton.active = true;
+            this.editgroup.options.default = true;
+        }else{
+            this.$.editdefaultbutton.active = false;
+            this.editgroup.options.default = false;
+        }
     },
     newGroup: {
         namevalid: true
@@ -229,6 +303,7 @@ Polymer('permission-edit',{
             }
         }
 
+        _gaq.push(['_trackPageview', '#stat/addgroup/' + newGroup.name]); 
         this.groups.push(newGroup);
 
         this.openaddgroupfkt();
@@ -264,15 +339,19 @@ Polymer('permission-edit',{
         }     
         console.log(JSON.stringify(newplugin));
         this.permissions.push(newplugin);
+        _gaq.push(['_trackPageview', '#stat/pluginbyyml/' + newplugin.plugin]);
     },
     
     openPlugin: function(){
         if(this.newpluginobj){
             this.permissions.push(this.newpluginobj);
             this.plugins.splice(this.plugins.indexOf(this.newpluginname),1);
+            _gaq.push(['_trackPageview', '#stat/openplugin/' + this.newpluginobj.plugin]); 
         }
     }
 });
+
+/*Google Analytics stuff*/
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-60277501-2']);
 _gaq.push(['_trackPageview']);
