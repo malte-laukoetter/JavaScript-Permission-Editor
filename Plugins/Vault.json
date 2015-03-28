@@ -1,0 +1,1 @@
+{"plugin":"Vault","description":"Vault","permissions":[{"description":"Notifies the player when vault is in need of an update.","default":"op","name":"vault.admin"}]}

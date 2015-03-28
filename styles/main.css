@@ -44,8 +44,9 @@ paper-item.core-selected {
     margin-top:5px;
 }
 .permission .key{
-    width:200px; 
+    min-width:300px; 
     margin-left: 5px;
+    margin-right: 5px;
 }
 .permission:hover{
     font-weight: bolder

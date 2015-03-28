@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Permissioneditor 0.1.4</title>
+  <title>Permissioneditor 0.2.0</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- build:css styles/main.css -->
@@ -25,33 +25,19 @@
     <polymer-element name="permission-edit">
         <template>
             <link rel="stylesheet" href="styles/main.css">
-            <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{permissions}}" on-core-response="{{test}}"></core-ajax>
-            
-            
-            <paper-dialog transition="core-transition-top" opened="{{openimport}}">
-                <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="Import"></textarea>
-                </div>
-            </paper-dialog>
-            
-            
-            
-            <paper-dialog transition="core-transition-top" opened="{{openexport}}">
-                <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="Export"></textarea>
-                </div>
-            </paper-dialog>
-      
+            <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{plugins}}"></core-ajax>
+            <core-ajax id="ajax" auto url="Plugins/{{newpluginname}}.json" handleAs="json" response="{{newpluginobj}}" on-core-response="{{openPlugin}}"></core-ajax>
             <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
-            <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml" on-core-ready="{{loadPermissions}}"></yaml-js>
+            <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml"></yaml-js>
+            <yaml-js yaml="{{pluginyaml}}" js="{{newplugin}}" mode="tojs" on-core-ready="{{loadPlugin}}"></yaml-js>
             
             <template if="{{selectedVersion}}">
                 <div>
-                        <paper-button raised on-tap="{{openimportfkt}}">Import</paper-button>
-                        <paper-button raised on-tap="{{save}}{{openexportfkt}}">Export</paper-button>
-                        <paper-button raised on-tap="{{openaddgroupfkt}}">Gruppe hinzufügen</paper-button>
-                        <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">Plugin hinzufügen</paper-button>
-                    </div>
+                    <paper-button raised on-tap="{{openimportfkt}}">Import</paper-button>
+                    <paper-button raised on-tap="{{save}}{{openexportfkt}}">Export</paper-button>
+                    <paper-button raised on-tap="{{openaddgroupfkt}}">Gruppe hinzufügen</paper-button>
+                    <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">Plugin hinzufügen</paper-button>
+                </div>
                 
                 <div class="mainlayout">
                     <div class="buttonlist">          
@@ -74,19 +60,11 @@
                     </div>
                     <div>
                         <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
-                            <div class="permission item" layout horizontal on-tap="{{allcheckboxchanged}}">
-                                <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin]['*']}}"></paper-checkbox>
-                                
-                                <div class="key">
-                                    {{permissions[SelectedPlugin].plugin}}.*
-                                </div>
-                                Wähl alle Permissions des Plugins aus.
-                            </div>
                             <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
                                 <div class="permission item" layout horizontal on-tap="{{checkboxchanged}}">
                                     <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
                                     <div class="key">
-                                        {{permissions[SelectedPlugin].plugin}}.{{permission.name}}
+                                        {{permission.name}}
                                     </div>
                                     {{permission.description}}
                                 </div>
@@ -130,13 +108,41 @@
                         <paper-button raised on-tap="{{addGroup}}">Hinzufügen</paper-button>
                     </div>
                 </paper-dialog>
-            </template>
+                
+                <paper-dialog transition="core-transition-top" opened="{{openimport}}">
+                    <div style="height: 75vh;width:75vw">
+                        <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="Import"></textarea>
+                    </div>
+                </paper-dialog>
             
-            <paper-dialog transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddplugin}}">
-                <div style="height: 75vh;width:75vw">
-                    bla bla bla
-                </div>
-            </paper-dialog>
+                <paper-dialog transition="core-transition-top" opened="{{openexport}}">
+                    <div style="height: 75vh;width:75vw">
+                        <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="Export"></textarea>
+                    </div>
+                </paper-dialog>
+                
+               <paper-dialog transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddplugin}}">
+                    <div vertical horizontal center-justified layout>
+                        <paper-dropdown-menu label="Plugin auswählen">
+                            <paper-dropdown class="dropdown">
+                                <core-menu class="menu" selected="{{newpluginname}}" valueattr="name">
+                                    <template repeat="{{plugin in plugins}}">
+                                        <paper-item name="{{plugin}}">{{plugin}}</paper-item>
+                                    </template>
+                                </core-menu>
+                            </paper-dropdown>
+                        </paper-dropdown-menu>
+                        <br>
+                        <paper-button raised on-tap="{{openaddpluginbyfilefkt}}">anderes Plugin hinzufügen</paper-button>
+                    </div>
+                </paper-dialog>
+                
+                <paper-dialog transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddpluginbyfile}}">
+                    <div style="height: 75vh;width:75vw">
+                        <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Plugin.yml"></textarea>
+                    </div>
+                </paper-dialog>
+            </template>
         </template>
 
         <!-- build:js scripts/app.js -->

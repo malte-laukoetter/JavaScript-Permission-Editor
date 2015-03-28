@@ -15,6 +15,7 @@
                 jsChanged: function(oldVal, newVal) {
                     if(this.mode == "toyaml"){
                         this.yaml = jsyaml.dump(newVal);
+                        this.fire('core-ready');
                     }
                 }
             });

@@ -1,3 +1,6 @@
+//test if works with permissions added by import of permissionsfile
+//change plugins.json to new format
+
 Polymer('permission-edit',{
     selectedVersion: 1,
     
@@ -15,7 +18,7 @@ Polymer('permission-edit',{
                 var pluginrow = split[0];
                 var plugin = pluginrow.replace(/-/, '');
                 var permission = {};
-                permission.name = split.slice(1).join('.');
+                permission.name = this.groups[index-1].permissions[i];
                 permission.description = "unbekannt";
                 var pluginid = 0;
                 
@@ -61,10 +64,6 @@ Polymer('permission-edit',{
         this.ready();
     },
     
-    toggle: function(e) {
-        this.permissions[e.path[1].childNodes[2].innerText].toggle = !this.permissions[e.path[1].childNodes[2].innerText].toggle;
-    },
-    
     checkboxchanged: function(e) {
         var pluginindex = e.target.templateInstance.model.__proto__.SelectedPlugin;
         var plugin = this.permissions[pluginindex].plugin;
@@ -75,44 +74,32 @@ Polymer('permission-edit',{
         
         group.permissions[plugin][permission.name] = !group.permissions[plugin][permission.name];
         
-        var truepermissions = 0;
-        
-        var permissionlist = this.permissions[pluginindex].permissions;
-        
-        for(var i = 0; i < permissionlist.length; i++){
-            if(group.permissions[plugin].hasOwnProperty(permissionlist[i].name)){
-                if(group.permissions[plugin][permissionlist[i].name] == true && !group.permissions[plugin]['*']){
-                    truepermissions++;
+        this.setoutherpermissions(plugin,pluginindex,permission.name,group);
+    },
+    
+    setoutherpermissions: function(plugin,pluginindex,permission,group,notsetchilds){
+        for(var i = 0; i < this.permissions[pluginindex].permissions.length; i++){
+            if(this.permissions[pluginindex].permissions[i].name == permission){
+                var perm = this.permissions[pluginindex].permissions[i];
+                if(!notsetchilds){
+                    for(var child in perm.children){
+                        group.permissions[plugin][child] = group.permissions[plugin][permission]?perm.children[child]:!perm.children[child];
+                        this.setoutherpermissions(plugin,pluginindex,child,group);
+                    }
                 }
-            }else{
-                group.permissions[plugin][permissionlist[i].name] == false;
+                
+                
+                for(var parent in perm.parents){
+                    if(group.permissions[plugin][parent] != group.permissions[plugin][permission]){
+                        group.permissions[plugin][parent] = false;
+                        this.setoutherpermissions(plugin,pluginindex,parent,group,true);
+                    }
+                }
+                return;
             }
         }
-        
-        if(truepermissions >= permissionlist.length){
-            group.permissions[plugin]['*'] = true;
-        }else{
-            group.permissions[plugin]['*'] = false;
-        }
     },
-    
-    allcheckboxchanged: function(e) {
-        var pluginindex = this.SelectedPlugin;
-        var plugin = this.permissions[pluginindex].plugin;
-        var group = this.groups[this.SelectedGroup];
-        
-        if(!group.permissions[plugin]) group.permissions[plugin] = {};
-        
-        var newState = !group.permissions[plugin]['*'];
-        group.permissions[plugin]['*'] = newState;
-        
-        var permissionlist = this.permissions[pluginindex].permissions;
-        
-        for(var i = 0; i < permissionlist.length; i++){
-            group.permissions[plugin][permissionlist[i].name] = newState;
-        }
-    },
-    
+                    
     ready: function(){   
         for(var group in this.groups){
             var i = 0;
@@ -155,7 +142,7 @@ Polymer('permission-edit',{
             
             for(plugin in this.js.groups[group.name].permissions){
                 for(permission in this.js.groups[group.name].permissions[plugin]){
-                    this.js.groups[group.name].permissions_new.push((this.js.groups[group.name].permissions[plugin][permission]?'':'-') + plugin + "." + permission);
+                    this.js.groups[group.name].permissions_new.push((this.js.groups[group.name].permissions[plugin][permission]?'':'-') + permission);
                 }
             }
             
@@ -165,118 +152,25 @@ Polymer('permission-edit',{
         }
     },
 
-    permissions: [
-        {
-            plugin: "lagg",
-            toggle: false,
-            permissions:[
-                {
-                    name: 'clear',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'check',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'reload',
-                    description: 'reloads the plugin'
-                },
-                {
-                    name: 'killmobs',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'area',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'unloadchunks',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'chunk',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'tpchunk',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'admin',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'gc',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'tps',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'halt',
-                    description: 'behebt laggs'
-                },
-                {
-                    name: 'help',
-                    description: 'behebt laggs'
-                }
-            ]
-        },
-        {
-            plugin: "modifyworld",
-            toggle: false,
-            permissions:[
-                {
-                    name: 'chat',
-                    description: 'erlaupt das chaten'
-                },
-                {
-                    name: 'spam',
-                    description: 'erlaupt das spammen'
-                }
-            ]
-        }
-    ],
+    permissions: [],
     
     'groups': [
         { 
             'name': 'Admin', 
             'permissions': {
-                'essentials': {
-                    '*': true,
-                    'help': false
-                }
+                
             }
         },
         {
             'name': 'Spieler',
             'permissions': {
-                'essentials': {
-                    '*': true,
-                    'help': false,
-                    'home': true,
-                    'sethome': true,
-                    'back': false
-                },
-                'chestlock': {
-                    '*': true
-                },
-                'modifyworld': {
-                    '*': true
-                }
+                
             }
         },
         { 
             'name': 'Gast',
             'permissions': {
-                'essentials': {
-                    '*': true
-                },
-                'modifyworld': {
-                    'chat': true
-                }
+                
             }
         }
     ],
@@ -292,52 +186,92 @@ Polymer('permission-edit',{
     openaddpluginfkt: function(){
         this.openaddplugin = !this.openaddplugin;
     },
+    openaddpluginbyfilefkt: function(){
+        this.openaddpluginbyfile = !this.openaddpluginbyfile;
+    },
     newGroup: {
         namevalid: true
     },
     addGroup:  function(){
-                            
-            console.log(this.newGroup)
-            if(this.newGroup.import){
-                var newGroup = JSON.parse(JSON.stringify(this.groups[this.newGroup.import - 1]));
-            }else{
-                var newGroup = {};
-            }
-        
-            if(!this.newGroup.name){
+        if(this.newGroup.import){
+            var newGroup = JSON.parse(JSON.stringify(this.groups[this.newGroup.import - 1]));
+        }else{
+            var newGroup = {};
+        }
+
+        if(!this.newGroup.name){
+            this.newGroup.namevalid = false;
+            return false;
+        }
+
+        for(var i = 0; i < this.groups.length; i++){
+            if(this.newGroup.name == this.groups[i].name){
                 this.newGroup.namevalid = false;
                 return false;
             }
-            
+        }
+
+        if(this.newGroup.prefix || this.newGroup.suffix || this.newGroup.rank || this.newGroup.default){ 
+            newGroup.options = {};
+        }
+        newGroup.name = this.newGroup.name;
+
+        if (this.newGroup.prefix){ newGroup.options.prefix = this.newGroup.prefix};
+        if (this.newGroup.suffix){ newGroup.options.suffix = this.newGroup.suffix};
+        if (this.newGroup.rank){ newGroup.options.rank = this.newGroup.rank};
+        if (this.newGroup.default){ newGroup.options.default = this.newGroup.default};
+
+        if(newGroup.options && newGroup.options.default){
             for(var i = 0; i < this.groups.length; i++){
-                if(this.newGroup.name == this.groups[i].name){
-                    this.newGroup.namevalid = false;
-                    return false;
+                if(this.groups[i].options){
+                    this.groups[i].options.default = false;
                 }
             }
-        
-            if(this.newGroup.prefix || this.newGroup.suffix || this.newGroup.rank || this.newGroup.default){ 
-                newGroup.options = {};
-            }
-            newGroup.name = this.newGroup.name;
-        
-            if (this.newGroup.prefix){ newGroup.options.prefix = this.newGroup.prefix};
-            if (this.newGroup.suffix){ newGroup.options.suffix = this.newGroup.suffix};
-            if (this.newGroup.rank){ newGroup.options.rank = this.newGroup.rank};
-            if (this.newGroup.default){ newGroup.options.default = this.newGroup.default};
-        
-            if(newGroup.options && newGroup.options.default){
-                for(var i = 0; i < this.groups.length; i++){
-                    if(this.groups[i].options){
-                        this.groups[i].options.default = false;
+        }
+
+        this.groups.push(newGroup);
+
+        this.openaddgroupfkt();
+    },
+    loadPlugin: function(){
+        var newplugin = {};
+        newplugin.plugin = this.newplugin.name;
+        newplugin.description = this.newplugin.description;
+        newplugin.permissions = [];
+        var i = 0
+        for(permission in this.newplugin.permissions){
+            newplugin.permissions[i] = this.newplugin.permissions[permission];
+            newplugin.permissions[i].name = permission;
+            for(childpermission in newplugin.permissions[i].children){
+                for(var k = 0; k < newplugin.permissions.length; k++){
+                    if(childpermission == newplugin.permissions[k].name){
+                        if(!newplugin.permissions[k].parents){newplugin.permissions[k].parents = {}}
+                        newplugin.permissions[k].parents[permission] = newplugin.permissions[i].children[childpermission];
                     }
                 }
             }
-        
-            this.groups.push(newGroup);
-        
-            this.openaddgroupfkt();
+            
+            for(var j = 0; j < newplugin.permissions.length; j++){
+                for(child in newplugin.permissions[j].children){
+                    if(child == permission){
+                        if(!newplugin.permissions[i].parents){newplugin.permissions[i].parents = {}}
+                        newplugin.permissions[i].parents[newplugin.permissions[j].name] = newplugin.permissions[j].children[child];
+                    }    
+                        
+                }
+            }
+            i++;
+        }     
+        console.log(JSON.stringify(newplugin));
+        this.permissions.push(newplugin);
+    },
+    
+    openPlugin: function(){
+        if(this.newpluginobj){
+            this.permissions.push(this.newpluginobj);
+            this.plugins.splice(this.plugins.indexOf(this.newpluginname),1);
         }
+    }
 });
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-60277501-2']);
