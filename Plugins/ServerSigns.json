@@ -1,0 +1,1 @@
+{"plugin":"ServerSigns","description":"ServerSigns\n","permissions":[{"description":"Gives access to all ServerSigns commands","default":"op","name":"serversigns.admin"},{"description":"Allows you to use a ServerSign","name":"serversigns.use"},{"default":"op","description":"Allows you to see update notifications","name":"serversigns.updatenotification"}]}

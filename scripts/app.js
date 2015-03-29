@@ -88,7 +88,7 @@ Polymer('permission-edit',{
         this.ready();
         
         //add the import to ga stat
-        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/import']); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#/stat/import']); 
     },
     
     /*
@@ -114,11 +114,11 @@ Polymer('permission-edit',{
     /*
     methode that sets outher permissions that are related to the given one
     
-    @param  plugin       the plugin that the permission is related to
-    @param  pluginindex  the index of the plugin in the permissions array
-    @param  permission   the name of the permission
-    @param  group        the group of the change
-    @param  notsetchilds optional true: only the parent permissions are setted
+    @param  plugin       object     the plugin that the permission is related to
+    @param  pluginindex  int        the index of the plugin in the permissions array
+    @param  permission   object     the name of the permission
+    @param  group        object     the group of the change
+    @param  notsetchilds boolean    optional true: only the parent permissions are setted
     */
     setoutherpermissions: function(plugin,pluginindex,permission,group,notsetchilds){
         for(var i = 0; i < this.permissions[pluginindex].permissions.length; i++){
@@ -143,33 +143,7 @@ Polymer('permission-edit',{
         }
     },
     
-    translation: {
-        "action": {
-            "import": "Import",
-            "export": "Export",
-            "add": "Hinzufügen"
-        },
-        
-        "group": {
-            "add": "Gruppe hinzufügen",
-            "name": "Gruppen Name",
-            "prefix": "Prefix",
-            "suffix": "Suffix",
-            "rank": "rank",
-            "copy": "Gruppe kopieren",
-            "edit": "Gruppe editieren",
-            "default": "Standart Gruppe"
-        },
-        
-        "plugin": {
-            "add": "Plugin hinzufügen",
-            "name": "Plugin Name",
-            "select": "Plugin auswählen",
-            "addouther": "anderes Plugin hinzufügen"
-        },
-    
-        "none": "keine"
-    },
+    translation: {},
                     
     ready: function(){  
         for(var group in this.groups){
@@ -213,7 +187,9 @@ Polymer('permission-edit',{
             
             for(plugin in this.js.groups[group.name].permissions){
                 for(permission in this.js.groups[group.name].permissions[plugin]){
-                    this.js.groups[group.name].permissions_new.push((this.js.groups[group.name].permissions[plugin][permission]?'':'-') + permission);
+                    if(this.js.groups[group.name].permissions[plugin][permission]){
+                        this.js.groups[group.name].permissions_new.push(permission);
+                    }
                 }
             }
             
@@ -222,7 +198,7 @@ Polymer('permission-edit',{
             delete this.js.groups[group.name].name;
         }
         
-        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/export']); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#/stat/export']); 
     },
 
     permissions: [],
@@ -262,7 +238,7 @@ Polymer('permission-edit',{
     openaddpluginbyfilefkt: function(){
         this.openaddpluginbyfile = true;
     },
-    openeditgroupfkt : function(e){
+    openeditgroupfkt: function(e){
         this.openeditgroup = true;
         this.editgroup = e.target.templateInstance.model.group;
         if(this.editgroup.options){
@@ -270,8 +246,25 @@ Polymer('permission-edit',{
             this.$.editdefaultbutton.toggleBackground();
         }
     },
-    changeGroupsDefault : function(){
+    
+    delGroup: function(){
+        this.openeditgroup = false;
+        this.groups.splice(this.groups.indexOf(this.editgroup),1);
+    },
+    
+    delplugin: function(e){
+        var pluginindex = e.target.templateInstance.model.index;
+        var name = e.target.templateInstance.model.plugin.plugin;
+        this.permissions.splice(pluginindex,1);
         
+        for(var i = 0; i < this.groups.length; i++){
+            if(this.groups[i].permissions[name]){
+               delete this.groups[i].permissions[name];
+            }
+        }
+    },
+    
+    changeGroupsDefault : function(){
         if(!this.editgroup.options){
             this.editgroup.options = {}
         }
@@ -290,10 +283,13 @@ Polymer('permission-edit',{
             this.editgroup.options.default = false;
         }
     },
+    
     newGroup: {
         namevalid: true
     },
+    
     addGroup:  function(){
+        this.openaddgroup = false;
         if(this.newGroup.import){
             var newGroup = JSON.parse(JSON.stringify(this.groups[this.newGroup.import - 1]));
         }else{
@@ -330,11 +326,10 @@ Polymer('permission-edit',{
             }
         }
 
-        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/addgroup/' + newGroup.name]); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#/stat/addgroup/' + newGroup.name]); 
         this.groups.push(newGroup);
-
-        this.openaddgroupfkt();
     },
+    
     loadPlugin: function(){
         var newplugin = {};
         newplugin.plugin = this.newplugin.name;
@@ -367,7 +362,8 @@ Polymer('permission-edit',{
         if(newplugin.plugin != undefined){
             console.log(JSON.stringify(newplugin));
             this.permissions.push(newplugin);
-            _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/pluginbyyml/' + newplugin.plugin]);
+            if(newplugin.plugin != this.lastplugin){_gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#/stat/pluginbyyml/' + newplugin.plugin]);}
+            this.lastplugin = newplugin.plugin
         }
     },
     
@@ -375,9 +371,10 @@ Polymer('permission-edit',{
         if(this.newpluginobj){
             this.permissions.push(this.newpluginobj);
             this.plugins.splice(this.plugins.indexOf(this.newpluginname),1);
-            _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/openplugin/' + this.newpluginobj.plugin]); 
+            _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#/stat/openplugin/' + this.newpluginobj.plugin]); 
         }
     },
+    
     created: function() {
         var langCode = navigator.language || navigator.systemLanguage;
         var lang = langCode.toLowerCase();
@@ -388,10 +385,13 @@ Polymer('permission-edit',{
             this.lang = "en";
         }
     },
+    
     langs: {
         "de": "de",
         "en": "en"
-    }
+    },
+    
+    lastplugin: undefined
 });
 
 /*Google Analytics stuff*/

@@ -22,7 +22,7 @@ paper-item {
 paper-item:hover {
     background-color: #1976D2;
 }
-paper-button:hover {
+body /deep/ paper-button:hover {
     color: #1976D2
 }
 paper-item.core-selected {
@@ -71,3 +71,7 @@ paper-item.core-selected {
               margin-bottom: 10px
     }
  }
+
+body /deep/ paper-dropdown-menu /deep/ #scroller{
+    max-height: 300px;
+}

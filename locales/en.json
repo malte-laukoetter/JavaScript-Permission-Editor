@@ -13,7 +13,8 @@
         "rank": "rank",
         "copy": "copy group",
         "edit": "edit group",
-        "default": "default group"
+        "default": "default group",
+        "delete": "delete group"
     },
 
     "plugin": {
