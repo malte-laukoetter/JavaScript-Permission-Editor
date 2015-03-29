@@ -1,5 +1,4 @@
 Polymer('permission-edit',{
-    
     /*
     function for loading permissions from a permissions.yml
     */
@@ -89,7 +88,7 @@ Polymer('permission-edit',{
         this.ready();
         
         //add the import to ga stat
-        _gaq.push(['_trackPageview', '#stat/import']); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/import']); 
     },
     
     /*
@@ -143,8 +142,36 @@ Polymer('permission-edit',{
             }
         }
     },
+    
+    translation: {
+        "action": {
+            "import": "Import",
+            "export": "Export",
+            "add": "Hinzufügen"
+        },
+        
+        "group": {
+            "add": "Gruppe hinzufügen",
+            "name": "Gruppen Name",
+            "prefix": "Prefix",
+            "suffix": "Suffix",
+            "rank": "rank",
+            "copy": "Gruppe kopieren",
+            "edit": "Gruppe editieren",
+            "default": "Standart Gruppe"
+        },
+        
+        "plugin": {
+            "add": "Plugin hinzufügen",
+            "name": "Plugin Name",
+            "select": "Plugin auswählen",
+            "addouther": "anderes Plugin hinzufügen"
+        },
+    
+        "none": "keine"
+    },
                     
-    ready: function(){   
+    ready: function(){  
         for(var group in this.groups){
             var i = 0;
             for(var plugin in this.groups[group].permissions){
@@ -195,7 +222,7 @@ Polymer('permission-edit',{
             delete this.js.groups[group.name].name;
         }
         
-        _gaq.push(['_trackPageview', '#stat/export']); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/export']); 
     },
 
     permissions: [],
@@ -303,7 +330,7 @@ Polymer('permission-edit',{
             }
         }
 
-        _gaq.push(['_trackPageview', '#stat/addgroup/' + newGroup.name]); 
+        _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/addgroup/' + newGroup.name]); 
         this.groups.push(newGroup);
 
         this.openaddgroupfkt();
@@ -337,17 +364,33 @@ Polymer('permission-edit',{
             }
             i++;
         }     
-        console.log(JSON.stringify(newplugin));
-        this.permissions.push(newplugin);
-        _gaq.push(['_trackPageview', '#stat/pluginbyyml/' + newplugin.plugin]);
+        if(newplugin.plugin != undefined){
+            console.log(JSON.stringify(newplugin));
+            this.permissions.push(newplugin);
+            _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/pluginbyyml/' + newplugin.plugin]);
+        }
     },
     
     openPlugin: function(){
         if(this.newpluginobj){
             this.permissions.push(this.newpluginobj);
             this.plugins.splice(this.plugins.indexOf(this.newpluginname),1);
-            _gaq.push(['_trackPageview', '#stat/openplugin/' + this.newpluginobj.plugin]); 
+            _gaq.push(['_trackPageview', 'JavaScript-Permission-Editor/#stat/openplugin/' + this.newpluginobj.plugin]); 
         }
+    },
+    created: function() {
+        var langCode = navigator.language || navigator.systemLanguage;
+        var lang = langCode.toLowerCase();
+        lang = lang.substr(0,2);
+        if(this.langs[lang]){
+            this.lang = lang;
+        }else{
+            this.lang = "en";
+        }
+    },
+    langs: {
+        "de": "de",
+        "en": "en"
     }
 });
 

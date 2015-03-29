@@ -1,0 +1,27 @@
+{
+    "action": {
+        "import": "import",
+        "export": "export",
+        "add": "add"
+    },
+        
+    "group": {
+        "add": "add group",
+        "name": "name",
+        "prefix": "prefix",
+        "suffix": "suffix",
+        "rank": "rank",
+        "copy": "copy group",
+        "edit": "edit group",
+        "default": "default group"
+    },
+
+    "plugin": {
+        "add": "add plugin",
+        "name": "name",
+        "select": "select plugin",
+        "addouther": "add anouther plugin"
+    },
+
+    "none": "none"
+}

@@ -15,6 +15,7 @@
   <!-- build:js bower_components/webcomponentsjs/webcomponents.min.js -->
   <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
   <!-- endbuild -->
+    
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
@@ -25,16 +26,17 @@
     <polymer-element name="permission-edit">
         <template>
             <link rel="stylesheet" href="styles/main.css">
-            <core-ajax id="ajax" auto url="scripts/plugins.json" handleAs="json" response="{{plugins}}"></core-ajax>
-            <core-ajax id="ajax" auto url="Plugins/{{newpluginname}}.json" handleAs="json" response="{{newpluginobj}}" on-core-response="{{openPlugin}}"></core-ajax>
+            <core-ajax auto url="scripts/plugins.json" handleAs="json" response="{{plugins}}"></core-ajax>
+            <core-ajax auto url="locales/{{lang}}.json" handleAs="json" response="{{translation}}"></core-ajax>
+            <core-ajax auto url="Plugins/{{newpluginname}}.json" handleAs="json" response="{{newpluginobj}}" on-core-response="{{openPlugin}}"></core-ajax>
             <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
             <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml"></yaml-js>
             <yaml-js yaml="{{pluginyaml}}" js="{{newplugin}}" mode="tojs" on-core-ready="{{loadPlugin}}"></yaml-js>
             <div>
-                <paper-button raised on-tap="{{openimportfkt}}">Import</paper-button>
-                <paper-button raised on-tap="{{save}}{{openexportfkt}}">Export</paper-button>
-                <paper-button raised on-tap="{{openaddgroupfkt}}">Gruppe hinzufügen</paper-button>
-                <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">Plugin hinzufügen</paper-button>
+                <paper-button raised on-tap="{{openimportfkt}}">{{translation.action.import}}</paper-button>
+                <paper-button raised on-tap="{{save}}{{openexportfkt}}">{{translation.action.export}}</paper-button>
+                <paper-button raised on-tap="{{openaddgroupfkt}}">{{translation.group.add}}</paper-button>
+                <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">{{translation.plugin.add}}</paper-button>
             </div>
 
             <div class="mainlayout">
@@ -78,25 +80,25 @@
 
             <!--Dialoge-->
 
-            <paper-dialog backdrop transition="core-transition-top" header="Gruppe hinzufügen" opened="{{openaddgroup}}">
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddgroup}}">
                 <div id="addgroup" layout vertical>
-                    <paper-input-decorator floatingLabel label="Gruppen Name" isInvalid?="{{!newGroup.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" isInvalid?="{{!newGroup.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
                         <input value="{{newGroup.name}}" is="core-input">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="Prefix" isInvalid?="{{newGroup.prefixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{newGroup.prefixvalid}}" error="Error">
                         <input is="core-input" value="{{newGroup.prefix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="Suffix" isInvalid?="{{newGroup.suffixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{newGroup.suffixvalid}}" error="Error">
                         <input is="core-input" value="{{newGroup.suffix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="rank" isInvalid?="{{!$.inputrank.validity.valid}}" error="Rank muss eine Zahl sein">
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.inputrank.validity.valid}}" error="Rank muss eine Zahl sein">
                         <input id="inputrank" value="{{newGroup.rank}}" type="number" is="core-input" pattern="^[0-9]*">
                     </paper-input-decorator>
 
-                    <paper-dropdown-menu label="Gruppe kopieren">
+                    <paper-dropdown-menu label="{{translation.group.copy}}">
                         <paper-dropdown class="dropdown">
                             <core-menu class="menu" selected="{{newGroup.import}}">
-                                <paper-item>keine</paper-item>
+                                <paper-item>{{translation.none}}</paper-item>
                                 <template repeat="{{group in groups}}">
                                     <paper-item>{{group.name}}</paper-item>
                                 </template>
@@ -104,46 +106,46 @@
                         </paper-dropdown>
                     </paper-dropdown-menu>
 
-                    <paper-button raised toggle active="{{newGroup.default}}">Default</paper-button>
+                    <paper-button raised toggle active="{{newGroup.default}}">{{translation.group.default}}</paper-button>
                     <br>
-                    <paper-button raised on-tap="{{addGroup}}">Hinzufügen</paper-button>
+                    <paper-button raised on-tap="{{addGroup}}">{{translation.action.add}}</paper-button>
                 </div>
             </paper-dialog>
 
-            <paper-dialog backdrop transition="core-transition-top" header="Gruppe editieren" opened="{{openeditgroup}}">
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openeditgroup}}">
                 <div layout vertical>
-                    <paper-input-decorator floatingLabel label="Gruppen Name" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
                         <input value="{{editgroup.name}}" is="core-input">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="Prefix" isInvalid?="{{editgroup.prefixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{editgroup.prefixvalid}}" error="Error">
                         <input is="core-input" value="{{editgroup.options.prefix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="Suffix" isInvalid?="{{editgroup.suffixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{editgroup.suffixvalid}}" error="Error">
                         <input is="core-input" value="{{editgroup.options.suffix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="rank" isInvalid?="{{!$.editinputrank.validity.valid}}" error="Rank muss eine Zahl sein">
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.editinputrank.validity.valid}}" error="Rank muss eine Zahl sein">
                         <input id="editinputrank" value="{{editgroup.options.rank}}" type="number" is="core-input" pattern="^[0-9]*">
                     </paper-input-decorator>
 
-                    <paper-button id="editdefaultbutton" raised toggle on-tap="{{changeGroupsDefault}}">Default</paper-button>
+                    <paper-button id="editdefaultbutton" raised toggle on-tap="{{changeGroupsDefault}}">{{translation.group.default}}</paper-button>
                 </div>
             </paper-dialog>
 
             <paper-dialog backdrop transition="core-transition-top" opened="{{openimport}}">
                 <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="Import"></textarea>
+                    <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="{{translation.action.import}}"></textarea>
                 </div>
             </paper-dialog>
 
-            <paper-dialog backdrop transition="core-transition-top" opened="{{openexport}}">
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openexport}}" >
                 <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="Export"></textarea>
+                    <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="{{translation.action.export}}"></textarea>
                 </div>
             </paper-dialog>
 
-           <paper-dialog backdrop transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddplugin}}">
+           <paper-dialog backdrop transition="core-transition-top" opened="{{openaddplugin}}">
                 <div vertical center-justified layout>
-                    <paper-dropdown-menu label="Plugin auswählen">
+                    <paper-dropdown-menu label="{{translation.plugin.select}}">
                         <paper-dropdown class="dropdown">
                             <core-menu class="menu" selected="{{newpluginname}}" valueattr="name">
                                 <template repeat="{{plugin in plugins}}">
@@ -153,11 +155,11 @@
                         </paper-dropdown>
                     </paper-dropdown-menu>
                     <br>
-                    <paper-button raised on-tap="{{openaddpluginbyfilefkt}}">anderes Plugin hinzufügen</paper-button>
+                    <paper-button raised on-tap="{{openaddpluginbyfilefkt}}">{{translation.plugin.addouther}}</paper-button>
                 </div>
             </paper-dialog>
 
-            <paper-dialog backdrop transition="core-transition-top" header="Plugin hinzufügen" opened="{{openaddpluginbyfile}}">
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
                 <div style="height: 75vh;width:75vw">
                     <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Plugin.yml"></textarea>
                 </div>
