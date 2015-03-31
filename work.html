@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Permissioneditor 0.2.3</title>
+  <title>Permissioneditor 0.2.5</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- build:css styles/main.min.css -->
@@ -31,20 +31,38 @@
             <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
             <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml"></yaml-js>
             <yaml-js yaml="{{pluginyaml}}" js="{{newplugin}}" mode="tojs" on-core-ready="{{loadPlugin}}"></yaml-js>
+
             <div>
                 <paper-button raised on-tap="{{openimportfkt}}">{{translation.action.import}}</paper-button>
                 <paper-button raised on-tap="{{save}}{{openexportfkt}}">{{translation.action.export}}</paper-button>
                 <paper-button raised on-tap="{{openaddgroupfkt}}">{{translation.group.add}}</paper-button>
-                <paper-button raised on-tap="{{openaddpluginfkt}}" style="margin-top: 2px">{{translation.plugin.add}}</paper-button>
+                <paper-button raised on-tap="{{openaddpluginfkt}}">{{translation.plugin.add}}</paper-button>
+                <paper-button raised on-tap="{{openaddworldfkt}}">{{translation.world.add}}</paper-button>
             </div>
-
+            
             <div class="mainlayout">
+                <div class="buttonlist">
+                    <paper-shadow>
+                        <paper-item on-tap="{{openaddworldfkt}}" class="head" layout center horizontal center-justified>{{translation.world.worlds}}</paper-item>
+                        <core-selector selected="{{SelectedWorld}}">
+                            <template repeat="{{world, index in worlds}}">
+                                <paper-item>
+                                    <span flex>{{world.name}}</span>
+                                    <core-icon on-tap="{{delworld}}" icon="delete"></core-icon>
+                                    <core-icon on-tap="{{openeditworldfkt}}" icon="editor:mode-edit"></core-icon>
+                                </paper-item>
+                            </template>
+                        </core-selector>
+                    </paper-shadow>
+                </div>
                 <div class="buttonlist">          
                     <paper-shadow>
+                        <paper-item on-tap="{{openaddgroupfkt}}" class="head" layout center horizontal center-justified>{{translation.group.groups}}</paper-item>
                         <core-selector selected="{{SelectedGroup}}">
                             <template repeat="{{group in groups}}">
-                                <paper-item style="margin-top: 2px">
+                                <paper-item>
                                     <span flex>{{group.name}}</span>
+                                    <core-icon on-tap="{{delGroup}}" icon="delete"></core-icon>
                                     <core-icon on-tap="{{openeditgroupfkt}}" icon="editor:mode-edit"></core-icon>
                                 </paper-item>
                             </template>
@@ -53,9 +71,10 @@
                 </div>
                 <div class="buttonlist">
                     <paper-shadow>
+                        <paper-item on-tap="{{openaddpluginfkt}}" class="head" layout center horizontal center-justified>{{translation.plugin.plugins}}</paper-item>
                         <core-selector selected="{{SelectedPlugin}}">
                             <template repeat="{{plugin, index in permissions}}">
-                                <paper-item style="margin-top: 2px">
+                                <paper-item>
                                     <span flex>{{plugin.plugin}}</span>
                                     <core-icon on-tap="{{delplugin}}" icon="delete"></core-icon>
                                 </paper-item>
@@ -67,7 +86,7 @@
                     <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
                         <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
                             <div class="permission item" layout horizontal on-tap="{{checkboxchanged}}">
-                                <paper-checkbox checked?="{{groups[SelectedGroup].permissions[permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
+                                <paper-checkbox checked?="{{groups[SelectedGroup].worlds[worlds[SelectedWorld].name][permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
                                 <div class="key">
                                     {{permission.name}}
                                 </div>
@@ -130,8 +149,6 @@
                     </paper-input-decorator>
 
                     <paper-button id="editdefaultbutton" raised toggle on-tap="{{changeGroupsDefault}}">{{translation.group.default}}</paper-button>
-                    <br>
-                    <paper-button raised on-tap="{{delGroup}}">{{translation.group.delete}}</paper-button>
                 </div>
             </paper-dialog>
 
@@ -166,6 +183,35 @@
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
                 <div style="height: 75vh;width:75vw">
                     <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Plugin.yml"></textarea>
+                </div>
+            </paper-dialog>
+            
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddworld}}">
+                <div id="addworld" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" isInvalid?="{{!newWorld.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                        <input value="{{newWorld.name}}" is="core-input">
+                    </paper-input-decorator>
+
+                    <paper-dropdown-menu label="{{translation.world.copy}}">
+                        <paper-dropdown layered class="dropdown">
+                            <core-menu class="menu" selected="{{newWorld.import}}">
+                                <paper-item>{{translation.none}}</paper-item>
+                                <template repeat="{{world in worlds}}">
+                                    <paper-item>{{world.name}}</paper-item>
+                                </template>
+                            </core-menu>
+                        </paper-dropdown>
+                    </paper-dropdown-menu>
+                    <br>
+                    <paper-button raised on-tap="{{addWorld}}">{{translation.action.add}}</paper-button>
+                </div>
+            </paper-dialog>
+            
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openeditworld}}">
+                <div id="editworld" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                        <input value="{{worlds[SelectedWorld].name}}" is="core-input">
+                    </paper-input-decorator>
                 </div>
             </paper-dialog>
         </template>

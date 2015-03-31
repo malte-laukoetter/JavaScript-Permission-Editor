@@ -14,14 +14,23 @@
         "copy": "Gruppe kopieren",
         "edit": "Gruppe editieren",
         "default": "Standart Gruppe",
-        "delete": "Gruppe löschen"
+        "delete": "Gruppe löschen",
+        "groups": "Gruppen"
     },
 
     "plugin": {
         "add": "Plugin hinzufügen",
         "name": "Plugin Name",
         "select": "Plugin auswählen",
-        "addouther": "anderes Plugin hinzufügen"
+        "addouther": "anderes Plugin hinzufügen",
+        "plugins": "Plugins"
+    },
+    
+    "world": {
+        "add": "Welt hinzufügen",
+        "name": "Name der Welt",
+        "copy": "Welt kopieren",
+        "worlds": "Welten"
     },
 
     "none": "keine"

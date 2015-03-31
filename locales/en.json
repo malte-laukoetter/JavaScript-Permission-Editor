@@ -14,14 +14,20 @@
         "copy": "copy group",
         "edit": "edit group",
         "default": "default group",
-        "delete": "delete group"
+        "delete": "delete group",
+        "groups": "groups"
     },
 
     "plugin": {
         "add": "add plugin",
         "name": "name",
         "select": "select plugin",
-        "addouther": "add anouther plugin"
+        "addouther": "add anouther plugin",
+        "plugins": "plugins"
+    },
+    
+    "world": {
+        "worlds": "worlds"
     },
 
     "none": "none"
