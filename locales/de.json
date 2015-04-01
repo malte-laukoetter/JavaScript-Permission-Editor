@@ -32,6 +32,10 @@
         "copy": "Welt kopieren",
         "worlds": "Welten"
     },
+    
+    "permission": {
+        "key": "Permission"
+    },
 
     "none": "keine"
 }

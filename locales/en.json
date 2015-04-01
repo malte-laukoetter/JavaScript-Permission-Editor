@@ -29,6 +29,10 @@
     "world": {
         "worlds": "worlds"
     },
+    
+    "permission": {
+        "key": "permission"
+    },
 
     "none": "none"
 }

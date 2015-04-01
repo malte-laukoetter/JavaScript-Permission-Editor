@@ -269,6 +269,10 @@ Polymer('permission-edit',{
     openaddpluginbyfilefkt: function(){
         this.openaddpluginbyfile = true;
     },
+    openaddpermissionfkt: function(e){
+        this.addplugin = e.target.templateInstance.model.plugin
+        this.openaddpermission = true;
+    },
     openeditworldfkt: function(e){
         if(e.target.templateInstance.model.index != 0){
             this.openeditworld = true;  
@@ -304,12 +308,15 @@ Polymer('permission-edit',{
         this.permissions.splice(pluginindex,1);
         
         for(var i = 0; i < this.groups.length; i++){
-            if(this.groups[i].permissions[name]){
-               delete this.groups[i].permissions[name];
+            for(world in this.groups[i].worlds){
+                console.log(world)
+                if(this.groups[i].worlds[world][name]){
+                    delete this.groups[i].worlds[world][name];
+                }
             }
         }
         
-        this.plugins.add(name);
+        this.plugins.push(name);
         
         _gaq.push(['_trackEvent', 'plugin', 'delete', name]); 
     },
@@ -481,10 +488,19 @@ Polymer('permission-edit',{
         }
     },
     
+    addpermission: function(){
+        this.openaddpermission = false;
+        var plugin = this.addplugin;
+        var permission = {};
+        permission.name = this.addpermissionname;
+        plugin.permissions.push(permission);
+    },
+    
     langs: {
         "de": "de",
         "en": "en"
     },
+    
     worlds: [
         {
             name: "all"
