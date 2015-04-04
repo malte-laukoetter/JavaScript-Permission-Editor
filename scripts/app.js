@@ -5,88 +5,123 @@ Polymer('permission-edit',{
     loadPermissions: function() {
         //clear all exsisting groups
         this.groups = [];
+        this.worlds = [];
+        
         for(group in this.jsnew.groups){
             //add the new group to the groups array
-            var index = this.groups.push(this.jsnew.groups[group]);
+            var index = this.groups.push(JSON.parse(JSON.stringify(this.jsnew.groups[group])));
             //set the name of the group
             this.groups[index-1].name = group;
        
             //add a clear permissions object to the group
-            this.groups[index-1].permissions_new = {};
+            this.groups[index-1].worlds_new = {};
+
+            if(!this.groups[index-1].worlds){
+                this.groups[index-1].worlds = {};
+            }
             
-            for(var i = 0; i < this.groups[index-1].permissions.length; i++){
-
-                //save the unedited plugin
-                var pluginrow = this.groups[index-1].permissions[i].split(".")[0];
-                //get the name of the plugin (the main key of the permission)
-                var plugin = pluginrow.replace(/-/, '');
-                //create a clear permissions object
-                var permission = {};
-                //add the name to the permission
-                permission.name = this.groups[index-1].permissions[i].replace(/-/, '');
+            this.groups[index-1].worlds.all = {};
+            this.groups[index-1].worlds.all.permissions = this.groups[index-1].permissions;
+            
+            for(world in this.groups[index-1].worlds){
+                this.groups[index-1].worlds_new[world] = {};
                 
-                //a variable for the pluginid
-                var pluginid = 0;
-                //couter
-                var k = 0;
-                //search for the plugin in the permissions array
-                for(var j = 0; j < this.permissions.length; j++){
-                    if(this.permissions[j].plugin !== plugin) {
-                        //count +1 for every plugin that is not the same as the searched
-                        k++;
-                    }else{
-                        //set the pluginid if the plugin is the searched plugin
-                        pluginid = j;
-                        break;
-                    }
-                }
-
-                //test if already a plugin of the name is registerd in the groups permissions
-                if(!this.groups[index-1].permissions_new[plugin]){
-                    //create it if not
-                    this.groups[index-1].permissions_new[plugin] = {};
-
-                    //and create a new plugin
-                    if(k >= this.permissions.length){
-                        //set the plugin id to k (eg. the next higher id of the permission array)
-                        pluginid = k;
-                        //create a new object in this
-                        this.permissions[pluginid] = {};
-                        //set the name to the plugin key
-                        this.permissions[pluginid].plugin = plugin;
-                        //add a clear array for the permissions
-                        this.permissions[pluginid].permissions = [];
+                var worldexist = false;
+                
+                for(var k = 0; k < this.worlds.length; k++){
+                    if(this.worlds[k].name == world){
+                        worldexist = true;
+                        break
                     }
                 }
                 
-                //set the value of the permission
-                this.groups[index-1].permissions_new[plugin][permission.name] = ((pluginrow.charAt(0) == '-')?false:true);
-                
-                //reset the counter
-                k = 0;
-                
-                for(var j = 0; j < this.permissions[pluginid].permissions.length; j++){
-                    if(this.permissions[pluginid].permissions[j].name !== permission.name){
-                        //count +1 for every permission thats not the same as the searchet
-                        k++;
-                    }
+                if(!worldexist){
+                    var newworld = {};
+                    newworld.name = world
+                    
+                    this.worlds.push(newworld);
                 }
+                
+                
+                for(var i = 0; i < this.groups[index-1].worlds[world].permissions.length; i++){
+                    //save the unedited plugin
+                    var pluginrow = this.groups[index-1].worlds[world].permissions[i].split(".")[0];
+                    //get the name of the plugin (the main key of the permission)
+                    var plugin = pluginrow.replace(/-/, '');
+                    //create a clear permissions object
+                    var permission = {};
+                    //add the name to the permission
+                    permission.name = this.groups[index-1].worlds[world].permissions[i].replace(/-/, '');
 
-                //add the permission if the permission isn't there and isn't undefined
-                if(k >= this.permissions[pluginid].permissions.length && permission.name !== '' && permission.name !== undefined){
-                    this.permissions[pluginid].permissions.push(permission);
+                    //a variable for the pluginid
+                    var pluginid = 0;
+                    //couter
+                    var k = 0;
+                    //search for the plugin in the permissions array
+                    for(var j = 0; j < this.permissions.length; j++){
+                        if(this.permissions[j].plugin !== plugin) {
+                            //count +1 for every plugin that is not the same as the searched
+                            k++;
+                        }else{
+                            //set the pluginid if the plugin is the searched plugin
+                            pluginid = j;
+                            break;
+                        }
+                    }
+
+                    //test if already a plugin of the name is registerd in the groups permissions
+                    if(!this.groups[index-1].worlds_new[world][plugin]){
+                        //create it if not
+                        this.groups[index-1].worlds_new[world][plugin] = {};
+
+                        //and create a new plugin
+                        if(k >= this.permissions.length){
+                            //set the plugin id to k (eg. the next higher id of the permission array)
+                            pluginid = k;
+                            //create a new object in this
+                            this.permissions[pluginid] = {};
+                            //set the name to the plugin key
+                            this.permissions[pluginid].plugin = plugin;
+                            //add a clear array for the permissions
+                            this.permissions[pluginid].permissions = [];
+                        }
+                    }
+
+                    //set the value of the permission
+                    this.groups[index-1].worlds_new[world][plugin][permission.name] = ((pluginrow.charAt(0) == '-')?false:true);
+                     
+                    //reset the counter
+                    k = 0;
+
+                    for(var j = 0; j < this.permissions[pluginid].permissions.length; j++){
+                        if(this.permissions[pluginid].permissions[j].name !== permission.name){
+                            //count +1 for every permission thats not the same as the searchet
+                            k++;
+                        }
+                    }
+
+                    //add the permission if the permission isn't there and isn't undefined
+                    if(k >= this.permissions[pluginid].permissions.length && permission.name !== '' && permission.name !== undefined){
+                        this.permissions[pluginid].permissions.push(permission);
+                    }
                 }
             }
             
-            //copy the new permissions to the permissions key
-            this.groups[index-1].permissions = this.groups[index-1].permissions_new;
+         //   console.log(this.groups[index-1].worlds_new)
+            
+            //copy the new worlds to the worlds key
+            this.groups[index-1].worlds = this.groups[index-1].worlds_new;
             //delet the new permission key
-            delete this.groups[index-1].permissions_new;
+            delete this.groups[index-1].worlds_new;
+            delete this.groups[index-1].permissions;
         }
+        
+     //   console.log(this.groups)
+
         
         //call the ready function for some outher inits
         this.ready();
-        
+      //  console.log(this.groups)
         //add the import to ga stat
         _gaq.push(['_trackEvent', 'action', 'import']); 
     },
@@ -192,19 +227,17 @@ Polymer('permission-edit',{
                 if(world == "all"){
                     this.js.groups[groups[i].name].permission = [];
                     for(var plugin in group.worlds[world]){
-                        for(permission in group.worlds[world][plugin]){
-                            if(group.worlds[world][plugin][permission]){
-                                this.js.groups[groups[i].name].permission.push(permission);
-                            }
+                        for(var permission in group.worlds[world][plugin]){
+                            this.js.groups[groups[i].name].permission.push(group.worlds[world][plugin][permission]?permission:'-' + permission);
+
                         }
                     }
                 } else {
-                    this.js.groups[groups[i].name].worlds[world] = [];
+                    this.js.groups[groups[i].name].worlds[world] = {};
+                    this.js.groups[groups[i].name].worlds[world].permission = [];
                     for(var plugin in group.worlds[world]){
                         for(var permission in group.worlds[world][plugin]){
-                            if(group.worlds[world][plugin][permission]){
-                                this.js.groups[groups[i].name].worlds[world].push(permission);
-                            }
+                            this.js.groups[groups[i].name].worlds[world].permission.push(group.worlds[world][plugin][permission]?permission:'-' + permission);
                         }
                     } 
                 }
@@ -291,7 +324,6 @@ Polymer('permission-edit',{
     delGroup: function(e){
         var delgroup;
         if(e.target.templateInstance.model.group){
-            console.log(e.target.templateInstance.model.group)
             delgroup = e.target.templateInstance.model.group
         }else{
             this.openeditgroup = false;
@@ -309,7 +341,6 @@ Polymer('permission-edit',{
         
         for(var i = 0; i < this.groups.length; i++){
             for(world in this.groups[i].worlds){
-                console.log(world)
                 if(this.groups[i].worlds[world][name]){
                     delete this.groups[i].worlds[world][name];
                 }

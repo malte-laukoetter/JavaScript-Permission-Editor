@@ -16,17 +16,29 @@ paper-tabs {
     background-color: #2196F3;
 }
 
-paper-item {
+core-selector paper-item:nth-child(even) {
     background-color: #2196F3;
 }
-paper-item:hover {
-    background-color: #1976D2;
+core-selector paper-item:nth-child(odd) {
+    background-color: #03A9F4;
+}
+core-selector paper-item:hover {
+    background-color: #536DFE;
 }
 body /deep/ paper-button:hover {
-    color: #1976D2
+    font-weight: bold;
 }
-paper-item.core-selected {
-    background-color: #1976D2;
+core-selector paper-item.core-selected {
+    background-color: #536DFE;
+    font-weight: bold;
+}
+paper-item:hover{
+    font-weight: bold;
+}
+
+.head {
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .buttonlist{
@@ -38,6 +50,7 @@ paper-item.core-selected {
 .imprint{
     position: fixed;
     bottom: 0px;
+    width: 100%
 }
 
 .permission{
@@ -53,6 +66,7 @@ paper-item.core-selected {
 }
 
 .mainlayout{
+    margin-top: 3px;
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
@@ -74,4 +88,8 @@ paper-item.core-selected {
 
 body /deep/ paper-dropdown-menu /deep/ #scroller{
     max-height: 300px;
+}
+
+body /deep/ core-icon:hover{
+    color: #2be000
 }
