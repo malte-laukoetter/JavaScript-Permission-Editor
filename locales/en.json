@@ -31,8 +31,17 @@
     },
     
     "permission": {
-        "key": "permission"
+        "key": "permission",
+        "copy": "copy permission",
+        "description": "description"
     },
 
+    "error": {
+        "name": "A not exsisting name is required!",
+        "noint": "The value must be a number!"
+    },
+    
+    "pluginyml": "Content of the Plugin.yml - a file that can be found in the .jar file of the plugin.",
+    
     "none": "none"
 }

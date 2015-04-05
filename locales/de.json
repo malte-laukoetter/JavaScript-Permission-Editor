@@ -34,8 +34,17 @@
     },
     
     "permission": {
-        "key": "Permission"
+        "key": "Permission",
+        "copy": "Permission kopieren",
+        "description": "Beschreibung"
+    },
+    
+    "error": {
+        "name": "Es muss ein noch nicht vorhandener Name angegeben werden!",
+        "noint": "Der Wert muss eine Zahl sein!"
     },
 
+    "pluginyml": "Inhalt der Plugin.yml - einer Datei die in der .jar Datei des Plugins gefunden werden kann.",
+    
     "none": "keine"
 }

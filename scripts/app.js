@@ -522,9 +522,36 @@ Polymer('permission-edit',{
     addpermission: function(){
         this.openaddpermission = false;
         var plugin = this.addplugin;
-        var permission = {};
+        if(this.addpermissionimport){
+            var permission = JSON.parse(JSON.stringify(plugin.permissions[this.addpermissionimport - 1]));
+            for(parent in permission.parents){
+                for(var i = 0; i < plugin.permissions.length; i++){
+                    if(plugin.permissions[i].name == parent){
+                        plugin.permissions[i].children[this.addpermissionname] = true;
+                    }
+                }
+            }
+            for(child in permission.children){
+                for(var i = 0; i < plugin.permissions.length; i++){
+                    if(plugin.permissions[i].name == child){
+                        plugin.permissions[i].parents[this.addpermissionname] = true;
+                    }
+                }
+            }
+        }else{
+            var permission = {};
+        }
+        
+        if(this.addpermissiondescription){
+            permission.description = this.addpermissiondescription;
+        }
+        
         permission.name = this.addpermissionname;
         plugin.permissions.push(permission);
+        
+        this.addpermissiondescription = undefined;
+        this.addpermissionname = undefined;
+        this.addpermissionimport = undefined;
     },
     
     langs: {
@@ -537,7 +564,7 @@ Polymer('permission-edit',{
             name: "all"
         },
         {
-            name: "Mainmap"
+            name: "world"
         }
     ],
     
@@ -547,6 +574,7 @@ Polymer('permission-edit',{
 /*Google Analytics stuff*/
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-60277501-2']);
+_gaq.push(['_gat._anonymizeIp']);
 _gaq.push(['_trackPageview']);
 
 (function() {

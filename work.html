@@ -104,16 +104,16 @@
 
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddgroup}}">
                 <div id="addgroup" layout vertical>
-                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" isInvalid?="{{!newGroup.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" isInvalid?="{{!newGroup.namevalid}}" error="{{translation.error.name}}">
                         <input value="{{newGroup.name}}" is="core-input">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{newGroup.prefixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{newGroup.prefixvalid}}">
                         <input is="core-input" value="{{newGroup.prefix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{newGroup.suffixvalid}}" error="Error">
+                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{newGroup.suffixvalid}}">
                         <input is="core-input" value="{{newGroup.suffix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.inputrank.validity.valid}}" error="Rank muss eine Zahl sein">
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.inputrank.validity.valid}}" error="{{translation.error.name}}">
                         <input id="inputrank" value="{{newGroup.rank}}" type="number" is="core-input" pattern="^[0-9]*">
                     </paper-input-decorator>
 
@@ -136,7 +136,7 @@
 
             <paper-dialog backdrop transition="core-transition-top" opened="{{openeditgroup}}">
                 <div layout vertical>
-                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" error="{{translation.error.name}}">
                         <input value="{{editgroup.name}}" is="core-input">
                     </paper-input-decorator>
                     <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{editgroup.prefixvalid}}" error="Error">
@@ -145,7 +145,7 @@
                     <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{editgroup.suffixvalid}}" error="Error">
                         <input is="core-input" value="{{editgroup.options.suffix}}">
                     </paper-input-decorator>
-                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.editinputrank.validity.valid}}" error="Rank muss eine Zahl sein">
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.editinputrank.validity.valid}}" error="{{translation.error.noint}}">
                         <input id="editinputrank" value="{{editgroup.options.rank}}" type="number" is="core-input" pattern="^[0-9]*">
                     </paper-input-decorator>
 
@@ -183,13 +183,13 @@
 
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
                 <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Plugin.yml"></textarea>
+                    <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Inhalt der Plugin.yml - einer Datei die in der .jar Datei des Plugins gefunden werden kann."></textarea>
                 </div>
             </paper-dialog>
             
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddworld}}">
                 <div id="addworld" layout vertical>
-                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" isInvalid?="{{!newWorld.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" isInvalid?="{{!newWorld.namevalid}}" error="{{translation.error.name}}">
                         <input value="{{newWorld.name}}" is="core-input">
                     </paper-input-decorator>
 
@@ -210,9 +210,24 @@
             
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpermission}}">
                 <div id="addworld" layout vertical>
-                    <paper-input-decorator floatingLabel label="{{translation.permission.key}}" isInvalid?="{{!newWorld.namevalid}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
-                        <input value="{{addpermissionname}}" is="core-input">
+                    <paper-input-decorator floatingLabel label="{{translation.permission.key}}">
+                        <input committedValue="{{addpermissionname}}" is="core-input">
                     </paper-input-decorator>
+                    
+                    <paper-input-decorator floatingLabel label="{{translation.permission.description}}">
+                        <input value="{{addpermissiondescription}}" is="core-input">
+                    </paper-input-decorator>
+                    
+                    <paper-dropdown-menu label="{{translation.permission.copy}}">
+                        <paper-dropdown layered class="dropdown">
+                            <core-menu class="menu" selected="{{addpermissionimport}}">
+                                <paper-item>{{translation.none}}</paper-item>
+                                <template repeat="{{permission in addplugin.permissions}}">
+                                    <paper-item>{{permission.name}}</paper-item>
+                                </template>
+                            </core-menu>
+                        </paper-dropdown>
+                    </paper-dropdown-menu>
                     <br>
                     <paper-button raised on-tap="{{addpermission}}">{{translation.action.add}}</paper-button>
                 </div>
@@ -220,7 +235,7 @@
             
             <paper-dialog backdrop transition="core-transition-top" opened="{{openeditworld}}">
                 <div id="editworld" layout vertical>
-                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" error="Es muss ein noch nicht vorhandener Name angegeben werden">
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" error="{{translation.error.name}}">
                         <input value="{{worlds[SelectedWorld].name}}" is="core-input">
                     </paper-input-decorator>
                 </div>

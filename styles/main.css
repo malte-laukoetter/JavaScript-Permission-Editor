@@ -62,7 +62,9 @@ paper-item:hover{
     margin-right: 5px;
 }
 .permission:hover{
-    font-weight: bolder
+  /*  font-weight: bolder
+*/
+    color: #536DFE
 }
 
 .mainlayout{
