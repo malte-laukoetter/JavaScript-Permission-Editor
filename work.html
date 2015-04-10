@@ -43,13 +43,19 @@
             <div class="mainlayout">
                 <div class="buttonlist">
                     <paper-shadow>
-                        <paper-item on-tap="{{openaddworldfkt}}" class="head" layout center horizontal center-justified>{{translation.world.worlds}}</paper-item>
-                        <core-selector selected="{{SelectedWorld}}">
+                        <core-tooltip label="{{translation.world.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddworldfkt}}" class="head" layout center horizontal center-justified>{{translation.world.worlds}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedWorld}}" class="list">
                             <template repeat="{{world, index in worlds}}">
                                 <paper-item>
                                     <span flex>{{world.name}}</span>
-                                    <core-icon on-tap="{{delworld}}" icon="delete"></core-icon>
-                                    <core-icon on-tap="{{openeditworldfkt}}" icon="editor:mode-edit"></core-icon>
+                                    <core-tooltip label="{{translation.world.delete}}">
+                                        <core-icon on-tap="{{delworld}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.world.edit}}">
+                                        <core-icon on-tap="{{openeditworldfkt}}" icon="editor:mode-edit"></core-icon>
+                                    </core-tooltip>
                                 </paper-item>
                             </template>
                         </core-selector>
@@ -57,13 +63,19 @@
                 </div>
                 <div class="buttonlist">          
                     <paper-shadow>
-                        <paper-item on-tap="{{openaddgroupfkt}}" class="head" layout center horizontal center-justified>{{translation.group.groups}}</paper-item>
-                        <core-selector selected="{{SelectedGroup}}">
+                        <core-tooltip label="{{translation.group.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddgroupfkt}}" class="head" layout center horizontal center-justified>{{translation.group.groups}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedGroup}}" class="list">
                             <template repeat="{{group in groups}}">
                                 <paper-item>
                                     <span flex>{{group.name}}</span>
-                                    <core-icon on-tap="{{delGroup}}" icon="delete"></core-icon>
-                                    <core-icon on-tap="{{openeditgroupfkt}}" icon="editor:mode-edit"></core-icon>
+                                    <core-tooltip label="{{translation.group.delete}}">
+                                        <core-icon on-tap="{{delGroup}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.group.edit}}">
+                                        <core-icon on-tap="{{openeditgroupfkt}}" icon="editor:mode-edit"></core-icon>
+                                    </core-tooltip>
                                 </paper-item>
                             </template>
                         </core-selector>
@@ -71,13 +83,19 @@
                 </div>
                 <div class="buttonlist">
                     <paper-shadow>
-                        <paper-item on-tap="{{openaddpluginfkt}}" class="head" layout center horizontal center-justified>{{translation.plugin.plugins}}</paper-item>
-                        <core-selector selected="{{SelectedPlugin}}">
+                        <core-tooltip label="{{translation.plugin.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddpluginfkt}}" class="head" layout center horizontal center-justified>{{translation.plugin.plugins}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedPlugin}}" class="list">
                             <template repeat="{{plugin, index in permissions}}">
                                 <paper-item>
                                     <span flex>{{plugin.plugin}}</span>
-                                    <core-icon on-tap="{{delplugin}}" icon="delete"></core-icon>
-                                    <core-icon on-tap="{{openaddpermissionfkt}}" icon="add"></core-icon>
+                                    <core-tooltip label="{{translation.plugin.delete}}">
+                                        <core-icon on-tap="{{delplugin}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.permission.add}}">
+                                        <core-icon on-tap="{{openaddpermissionfkt}}" icon="add"></core-icon>
+                                    </core-tooltip>
                                 </paper-item>
                             </template>
                         </core-selector>
@@ -185,7 +203,7 @@
 
             <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
                 <div style="height: 75vh;width:75vw">
-                    <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="Inhalt der Plugin.yml - einer Datei die in der .jar Datei des Plugins gefunden werden kann."></textarea>
+                    <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="{{translation.pluginyml}}"></textarea>
                 </div>
             </paper-dialog>
             

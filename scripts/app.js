@@ -107,8 +107,6 @@ Polymer('permission-edit',{
                 }
             }
             
-         //   console.log(this.groups[index-1].worlds_new)
-            
             //copy the new worlds to the worlds key
             this.groups[index-1].worlds = this.groups[index-1].worlds_new;
             //delet the new permission key
@@ -116,12 +114,8 @@ Polymer('permission-edit',{
             delete this.groups[index-1].permissions;
         }
         
-     //   console.log(this.groups)
-
-        
         //call the ready function for some outher inits
         this.ready();
-      //  console.log(this.groups)
         //add the import to ga stat
         _gaq.push(['_trackEvent', 'action', 'import']); 
     },

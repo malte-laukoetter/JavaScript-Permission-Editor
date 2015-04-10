@@ -43,6 +43,7 @@ paper-item:hover{
 .head {
     text-transform: uppercase;
     text-align: center;
+    width: 100%;
 }
 
 .buttonlist{
@@ -80,13 +81,13 @@ paper-item:hover{
 }
 
 @media only screen and (max-width : 601px) {
-  .mainlayout {
-      -ms-flex-direction: column;
-      -webkit-flex-direction: column;
-     flex-direction: column;
-  }
+    .mainlayout {
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+    }
     .buttonlist{
-              margin-bottom: 10px
+        margin-bottom: 10px
     }
  }
 
@@ -96,4 +97,8 @@ body /deep/ paper-dropdown-menu /deep/ #scroller{
 
 body /deep/ core-icon:hover{
     color: #2be000
+}
+
+body /deep/ .buttonlist .list paper-item{
+    z-index: auto;
 }

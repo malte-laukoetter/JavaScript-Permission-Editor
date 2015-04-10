@@ -12,7 +12,7 @@
         "suffix": "Suffix",
         "rank": "rank",
         "copy": "Gruppe kopieren",
-        "edit": "Gruppe editieren",
+        "edit": "Gruppe bearbeiten",
         "default": "Standart Gruppe",
         "delete": "Gruppe löschen",
         "groups": "Gruppen"
@@ -23,17 +23,21 @@
         "name": "Plugin Name",
         "select": "Plugin auswählen",
         "addouther": "anderes Plugin hinzufügen",
-        "plugins": "Plugins"
+        "plugins": "Plugins",
+        "delete": "Plugin löschen"
     },
     
     "world": {
         "add": "Welt hinzufügen",
         "name": "Name der Welt",
         "copy": "Welt kopieren",
-        "worlds": "Welten"
+        "worlds": "Welten",
+        "delete": "Welt löschen",
+        "edit": "Welt bearbeiten"
     },
     
     "permission": {
+        "add": "Permission hinzufügen",
         "key": "Permission",
         "copy": "Permission kopieren",
         "description": "Beschreibung"

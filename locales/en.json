@@ -23,14 +23,18 @@
         "name": "name",
         "select": "select plugin",
         "addouther": "add anouther plugin",
-        "plugins": "plugins"
+        "plugins": "plugins",
+        "delete": "delete plugin"
     },
     
     "world": {
-        "worlds": "worlds"
+        "worlds": "worlds",
+        "delete": "delete world",
+        "edit": "edit world"
     },
     
     "permission": {
+        "add": "add permission",
         "key": "permission",
         "copy": "copy permission",
         "description": "description"
