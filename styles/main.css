@@ -28,6 +28,10 @@ core-selector paper-item:hover {
 body /deep/ paper-button:hover {
     font-weight: bold;
 }
+body /deep/ paper-checkbox[nodefault]::shadow #checkbox {
+      background-color: #f44242;
+      border-color: #f44242;
+    }
 core-selector paper-item.core-selected {
     background-color: #536DFE;
     font-weight: bold;
@@ -62,8 +66,6 @@ paper-item:hover{
     margin-right: 5px;
 }
 .permission:hover{
-  /*  font-weight: bolder
-*/
     color: #536DFE
 }
 
