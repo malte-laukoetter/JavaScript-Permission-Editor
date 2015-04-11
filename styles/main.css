@@ -19,23 +19,29 @@ paper-tabs {
 core-selector paper-item:nth-child(even) {
     background-color: #2196F3;
 }
+
 core-selector paper-item:nth-child(odd) {
     background-color: #03A9F4;
 }
+
 core-selector paper-item:hover {
     background-color: #536DFE;
 }
+
 body /deep/ paper-button:hover {
     font-weight: bold;
 }
+
 body /deep/ paper-checkbox[nodefault]::shadow #checkbox {
-      background-color: #f44242;
-      border-color: #f44242;
-    }
+    background-color: #f44242;
+    border-color: #f44242;
+}
+
 core-selector paper-item.core-selected {
     background-color: #536DFE;
     font-weight: bold;
 }
+
 paper-item:hover{
     font-weight: bold;
 }
@@ -61,11 +67,13 @@ paper-item:hover{
 .permission{
     margin-top:5px;
 }
+
 .permission .key{
     min-width:300px; 
     margin-left: 5px;
     margin-right: 5px;
 }
+
 .permission:hover{
     color: #536DFE
 }

@@ -3,7 +3,7 @@ Polymer('permission-edit',{
     function for loading permissions from a permissions.yml
     */
     loadPermissions: function() {
-        //clear all exsisting groups
+        //clear all exsisting groups and worlds
         this.groups = [];
         this.worlds = [];
         
@@ -16,6 +16,7 @@ Polymer('permission-edit',{
             //add a clear permissions object to the group
             this.groups[index-1].worlds_new = {};
 
+            //add a clear world object if there isn't one
             if(!this.groups[index-1].worlds){
                 this.groups[index-1].worlds = {};
             }
@@ -133,14 +134,12 @@ Polymer('permission-edit',{
         
         //test if the group has a permission of the plugin else create a clear object to save these permissions at
         if(!group.worlds[world][plugin]) group.worlds[world][plugin] = {};  
+               
+        //reverse the value of the permission
+        group.worlds[world][plugin][permission.name] = !group.worlds[world][plugin][permission.name];
         
-      //  if(!group.worlds.global[plugin][permission.name] || world == "global"){
-            //reverse the value of the permission
-            group.worlds[world][plugin][permission.name] = !group.worlds[world][plugin][permission.name];
-        
-            //call the methode for setting related permissions
-            this.setoutherpermissions(plugin,pluginindex,permission.name,group,world);
-      //  }
+        //call the methode for setting related permissions
+        this.setoutherpermissions(plugin,pluginindex,permission.name,group,world);
     },
     
     /*
@@ -176,6 +175,7 @@ Polymer('permission-edit',{
         }
     },
     
+    //for the loaded translation
     translation: {},
                     
     ready: function(){  
@@ -244,9 +244,11 @@ Polymer('permission-edit',{
         }
         _gaq.push(['_trackEvent', 'action', 'export']); 
     },
-
+    
+    //for the plugins
     permissions: [],
     
+    //init groups
     'groups': [
         { 
             'name': 'Admin', 
@@ -271,6 +273,9 @@ Polymer('permission-edit',{
         }
     ],
     
+    /*
+    funktions for open the dialogs
+    */
     openimportfkt: function() {
         this.openimport = true;
     },
@@ -290,42 +295,57 @@ Polymer('permission-edit',{
         this.openaddpluginbyfile = true;
     },
     openaddpermissionfkt: function(e){
+        //set the plugin to the selected one
         this.addplugin = e.target.templateInstance.model.plugin
         this.openaddpermission = true;
     },
     openeditworldfkt: function(e){
+        //only if its not the default world
         if(e.target.templateInstance.model.index != 0){
             this.openeditworld = true;  
         }
     },
-    
     openeditgroupfkt: function(e){
         this.openeditgroup = true;
+        //set the edit group to the selected group
         this.editgroup = e.target.templateInstance.model.group;
+        //set the defaultbutton to the right value (only works if options are there)
         if(this.editgroup.options){
             this.$.editdefaultbutton.active = this.editgroup.options.default;
-            this.$.editdefaultbutton.toggleBackground();
         }
+        //and toggel the background of the default button so he has the right design
+        this.$.editdefaultbutton.toggleBackground();
     },
     
+    /*
+    delets the selected group
+    
+    @param e eventdata
+    */
     delGroup: function(e){
-        var delgroup;
-        if(e.target.templateInstance.model.group){
-            delgroup = e.target.templateInstance.model.group
-        }else{
-            this.openeditgroup = false;
-            delgroup = this.editgroup;
-        }
+        //get the group thats button is pushed
+        var delgroup = e.target.templateInstance.model.group
         
+        //splice the element out of the array
         this.groups.splice(this.groups.indexOf(delgroup),1);
+        //and save to google analytics
         _gaq.push(['_trackEvent', 'group', 'delete', delgroup.name]); 
     },
     
+    /*
+    delets the selected plugin
+    
+    @param e eventdata
+    */
     delplugin: function(e){
+        //get the pluginname and the index
         var pluginindex = e.target.templateInstance.model.index;
         var name = e.target.templateInstance.model.plugin.plugin;
+        
+        //delet the element from the array
         this.permissions.splice(pluginindex,1);
         
+        //delet the plugin from each world
         for(var i = 0; i < this.groups.length; i++){
             for(world in this.groups[i].worlds){
                 if(this.groups[i].worlds[world][name]){
@@ -334,19 +354,39 @@ Polymer('permission-edit',{
             }
         }
         
+        //readd the plugin to the addselector
         this.plugins.push(name);
         
+        //save stat data to google analytics
         _gaq.push(['_trackEvent', 'plugin', 'delete', name]); 
     },
     
+    //select the default world
     SelectedWorld: 0,
     
+    /*
+    delets the selected world
+    
+    @param e eventdata
+    */
     delworld: function(e){
-        this.SelectedWorld = 0;
+        //get the name and index from the html
         var worldindex = e.target.templateInstance.model.index;
         var name = e.target.templateInstance.model.world.name;
-        if(worldindex !== 0){
+        //test if it's isn't the first world
+        if(worldindex != 0){
+            //select the default world so we have one selected
+            this.SelectedWorld = 0;
+            //delete the world from the array
             this.worlds.splice(worldindex,1);
+            //delete the world form the groupdata
+            for(var i = 0; i < this.groups.length; i++){
+                if(this.groups[i].worlds[name]){
+                    delete this.groups[i].worlds[name];
+                }
+            }
+            
+            //save stat data to google analytics
             _gaq.push(['_trackEvent', 'world', 'delete', name]); 
         } 
     },
@@ -371,6 +411,7 @@ Polymer('permission-edit',{
         }
     },
     
+    //set the validation of the newGroup to true, at init
     newGroup: {
         namevalid: true
     },
@@ -401,12 +442,11 @@ Polymer('permission-edit',{
         this.worlds.push(newWorld);
     },
     
+    //no import for new worlds and the name is valid
     newWorld: {
         import: 0,
         namevalid: true
-    },
-    
-    
+    },    
     
     addGroup:  function(){
         this.openaddgroup = false;
@@ -540,11 +580,13 @@ Polymer('permission-edit',{
         this.addpermissionimport = undefined;
     },
 
+    //list of currend languages
     langs: {
         "de": "de",
         "en": "en"
     },
     
+    //init worlds
     worlds: [
         {
             name: "global"
@@ -554,13 +596,22 @@ Polymer('permission-edit',{
         }
     ],
 
+    /*
+    set everything ready for loading a plugin.json
+    */
     startaddplugin: function(){
+        //get the index of the plugin
         var index = this.plugins.indexOf(this.newpluginname);
+        //index != -1 -> plugin is in list
         if(index != -1){
-            this.plugins.splice(index,1);
+            //set the name of the getplugin ajax
             this.newpluginnameconfirmed = this.newpluginname;
-            this.newpluginname = "";
+            //start the ajax
             this.$.getplugin.go();
+            //delete the plugin from the list
+            this.plugins.splice(index,1);
+            //clear the selected plugin
+            this.newpluginname = "";
         }
     }
 });

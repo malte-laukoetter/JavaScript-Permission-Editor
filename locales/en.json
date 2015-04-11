@@ -28,6 +28,9 @@
     },
     
     "world": {
+        "add": "add world",
+        "name": "name of the world",
+        "copy": "copy world",
         "worlds": "worlds",
         "delete": "delete world",
         "edit": "edit world"
