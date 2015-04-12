@@ -130,7 +130,8 @@ Polymer('permission-edit',{
         var plugin = this.permissions[pluginindex].plugin;
         var permission = e.target.templateInstance.model.permission;
         var group = this.groups[e.target.templateInstance.model.__proto__.SelectedGroup];
-        var world = this.worlds[e.target.templateInstance.model.SelectedWorld].name;
+        var worldindex = e.target.templateInstance.model.SelectedWorld;
+        var world = this.worlds[worldindex].name;
         
         //test if the group has a permission of the plugin else create a clear object to save these permissions at
         if(!group.worlds[world][plugin]) group.worlds[world][plugin] = {};  
@@ -140,6 +141,20 @@ Polymer('permission-edit',{
         
         //call the methode for setting related permissions
         this.setoutherpermissions(plugin,pluginindex,permission.name,group,world);
+        
+        //set the permissions of outher worlds when the default world is changed
+        if(worldindex == 0){
+            for(var i = 0; i < this.worlds.length; i++){
+                var worldi = this.worlds[i].name;
+                //test if the group has a permission of the plugin else create a clear object to save these permissions at
+                if(!group.worlds[worldi][plugin]) group.worlds[worldi][plugin] = {};  
+               
+                //set the value of the permission
+                group.worlds[worldi][plugin][permission.name] = group.worlds[world][plugin][permission.name];
+                //and for each related one
+                this.setoutherpermissions(plugin,pluginindex,permission.name,group,worldi);
+            }
+        }
     },
     
     /*
@@ -157,7 +172,6 @@ Polymer('permission-edit',{
                 var perm = this.permissions[pluginindex].permissions[i];                
                 if(!notsetchilds){
                     for(var child in perm.children){
-                        
                         group.worlds[world][plugin][child] = group.worlds[world][plugin][permission]?perm.children[child]:!perm.children[child];
                         this.setoutherpermissions(plugin,pluginindex,child,group,world);
                     }
