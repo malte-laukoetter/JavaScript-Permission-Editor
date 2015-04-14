@@ -1,0 +1,1 @@
+{"plugin":"GAListener","description":"Execute Commands on Votifier Events","permissions":[{"description":"Allows you to use all commands","default":false,"name":"gal.admin"},{"description":"Exclude from vote reminder","default":false,"name":"gal.noremind"},{"description":"Allows you to use /votetop","default":true,"name":"gal.top"}]}

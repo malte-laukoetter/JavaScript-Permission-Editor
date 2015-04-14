@@ -1,0 +1,1 @@
+{"plugin":"BungeePortals","description":"Create portals of any shape or size with WorldEdit, for BungeeCord.","permissions":[{"description":"Allowed to access the command /BPortals.","default":"op","name":"BungeePortals.command.BPortals"},{"description":"Access to all portals.","default":true,"name":"BungeePortals.portal.*"}]}

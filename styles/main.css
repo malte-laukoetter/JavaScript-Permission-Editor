@@ -24,6 +24,11 @@ core-selector paper-item:nth-child(odd) {
     background-color: #03A9F4;
 }
 
+/*currently not supportet by webcomponents (nth-child(n))*/
+body /deep/ #world core-selector paper-item:nth-child(1) core-icon{
+    display: none;
+}
+
 core-selector paper-item:hover {
     background-color: #536DFE;
 }
@@ -69,7 +74,7 @@ paper-item:hover{
 }
 
 .permission .key{
-    min-width:300px; 
+    min-width: 300px; 
     margin-left: 5px;
     margin-right: 5px;
 }
