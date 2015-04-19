@@ -6,13 +6,13 @@ Polymer('permission-edit',{
         //clear all exsisting groups and worlds
         this.groups = [];
         this.worlds = [];
-        
+
         for(group in this.jsnew.groups){
             //add the new group to the groups array
             var index = this.groups.push(JSON.parse(JSON.stringify(this.jsnew.groups[group])));
             //set the name of the group
             this.groups[index-1].name = group;
-       
+
             //add a clear permissions object to the group
             this.groups[index-1].worlds_new = {};
 
@@ -20,30 +20,30 @@ Polymer('permission-edit',{
             if(!this.groups[index-1].worlds){
                 this.groups[index-1].worlds = {};
             }
-            
+
             this.groups[index-1].worlds.global = {};
             this.groups[index-1].worlds.global.permissions = this.groups[index-1].permissions;
-            
+
             for(world in this.groups[index-1].worlds){
                 this.groups[index-1].worlds_new[world] = {};
-                
+
                 var worldexist = false;
-                
+
                 for(var k = 0; k < this.worlds.length; k++){
                     if(this.worlds[k].name == world){
                         worldexist = true;
                         break
                     }
                 }
-                
+
                 if(!worldexist){
                     var newworld = {};
                     newworld.name = world
-                    
+
                     this.worlds.push(newworld);
                 }
-                
-                
+
+
                 for(var i = 0; i < this.groups[index-1].worlds[world].permissions.length; i++){
                     //save the unedited plugin
                     var pluginrow = this.groups[index-1].worlds[world].permissions[i].split(".")[0];
@@ -90,7 +90,7 @@ Polymer('permission-edit',{
 
                     //set the value of the permission
                     this.groups[index-1].worlds_new[world][plugin][permission.name] = ((pluginrow.charAt(0) == '-')?false:true);
-                     
+
                     //reset the counter
                     k = 0;
 
@@ -107,20 +107,21 @@ Polymer('permission-edit',{
                     }
                 }
             }
-            
+
             //copy the new worlds to the worlds key
             this.groups[index-1].worlds = this.groups[index-1].worlds_new;
             //delet the new permission key
             delete this.groups[index-1].worlds_new;
             delete this.groups[index-1].permissions;
         }
-        
+
         //call the ready function for some outher inits
         this.ready();
-        //add the import to ga stat
-        _gaq.push(['_trackEvent', 'action', 'import']); 
+        //add the import to stat
+        this.$.la.trackEvent('action', 'import');
+    //    _gaq.push(['_trackEvent', 'action', 'import']);
     },
-    
+
     /*
     methode that changed the value of a checkbox and called the setoutherpermissions methode
     */
@@ -132,23 +133,23 @@ Polymer('permission-edit',{
         var group = this.groups[e.target.templateInstance.model.__proto__.SelectedGroup];
         var worldindex = e.target.templateInstance.model.SelectedWorld;
         var world = this.worlds[worldindex].name;
-        
+
         //test if the group has a permission of the plugin else create a clear object to save these permissions at
-        if(!group.worlds[world][plugin]) group.worlds[world][plugin] = {};  
-               
+        if(!group.worlds[world][plugin]) group.worlds[world][plugin] = {};
+
         //reverse the value of the permission
         group.worlds[world][plugin][permission.name] = !group.worlds[world][plugin][permission.name];
-        
+
         //call the methode for setting related permissions
         this.setoutherpermissions(plugin,pluginindex,permission.name,group,world);
-        
+
         //set the permissions of outher worlds when the default world is changed
         if(worldindex == 0){
             for(var i = 0; i < this.worlds.length; i++){
                 var worldi = this.worlds[i].name;
                 //test if the group has a permission of the plugin else create a clear object to save these permissions at
-                if(!group.worlds[worldi][plugin]) group.worlds[worldi][plugin] = {};  
-               
+                if(!group.worlds[worldi][plugin]) group.worlds[worldi][plugin] = {};
+
                 //set the value of the permission
                 group.worlds[worldi][plugin][permission.name] = group.worlds[world][plugin][permission.name];
                 //and for each related one
@@ -156,10 +157,10 @@ Polymer('permission-edit',{
             }
         }
     },
-    
+
     /*
     methode that sets outher permissions that are related to the given one
-    
+
     @param  plugin       object     the plugin that the permission is related to
     @param  pluginindex  int        the index of the plugin in the permissions array
     @param  permission   object     the name of the permission
@@ -169,15 +170,15 @@ Polymer('permission-edit',{
     setoutherpermissions: function(plugin,pluginindex,permission,group,world,notsetchilds){
         for(var i = 0; i < this.permissions[pluginindex].permissions.length; i++){
             if(this.permissions[pluginindex].permissions[i].name == permission){
-                var perm = this.permissions[pluginindex].permissions[i];                
+                var perm = this.permissions[pluginindex].permissions[i];
                 if(!notsetchilds){
                     for(var child in perm.children){
                         group.worlds[world][plugin][child] = group.worlds[world][plugin][permission]?perm.children[child]:!perm.children[child];
                         this.setoutherpermissions(plugin,pluginindex,child,group,world);
                     }
                 }
-                
-                
+
+
                 for(var parent in perm.parents){
                     if(group.worlds[world][plugin][parent] != group.worlds[world][plugin][permission]){
                         group.worlds[world][plugin][parent] = false;
@@ -188,20 +189,22 @@ Polymer('permission-edit',{
             }
         }
     },
-    
+
     //for the loaded translation
     translation: {},
-                    
-    ready: function(){  
+
+    ready: function(){
+        this.$.la.trackView();
+
         for(var group in this.groups){
             var i = 0;
             for(var world in this.groups.worlds){
                 for(var plugin in this.groups[group].worlds[world]){
                     if(this.groups[group].worlds[world][plugin]['*']){
                         stateall = this.groups[group].worlds[world][plugin]['*'];
-                    
+
                         var permissionlist = [];
-                    
+
                         for(var j = 0; j < this.permissions.length; j++){
                             if(this.permissions[j].plugin == plugin){
                                 permissionlist = this.permissions[j].permissions;
@@ -209,7 +212,7 @@ Polymer('permission-edit',{
                             }
                         }
 
-                        for(var j = 0; j < permissionlist.length; j++){  
+                        for(var j = 0; j < permissionlist.length; j++){
                             if(typeof this.groups[group].worlds[world][plugin][permissionlist[j].name] == 'undefined'){
                                 this.groups[group].worlds[world][plugin][permissionlist[j].name] = stateall;
                             }else{
@@ -222,13 +225,13 @@ Polymer('permission-edit',{
             }
         }
     },
-    
+
     save: function(){
         this.js = {};
         this.js.groups = {};
-        
+
         var groups = JSON.parse(JSON.stringify(this.groups));
-        
+
         for(var i = 0; i < groups.length; i++){
             this.js.groups[groups[i].name] = {};
             this.js.groups[groups[i].name].worlds = {};
@@ -249,23 +252,24 @@ Polymer('permission-edit',{
                         for(var permission in group.worlds[world][plugin]){
                             this.js.groups[groups[i].name].worlds[world].permission.push(group.worlds[world][plugin][permission]?permission:'-' + permission);
                         }
-                    } 
+                    }
                 }
             }
             if(groups[i].options){
                 this.js.groups[groups[i].name].options = groups[i].options;
             }
         }
-        _gaq.push(['_trackEvent', 'action', 'export']); 
+        this.$.la.trackEvent('action', 'export');
+    //    _gaq.push(['_trackEvent', 'action', 'export']);
     },
-    
+
     //for the plugins
     permissions: [],
-    
+
     //init groups
     'groups': [
-        { 
-            'name': 'Admin', 
+        {
+            'name': 'Admin',
             'worlds': {
                 'global': {},
                 'world': {}
@@ -278,7 +282,7 @@ Polymer('permission-edit',{
                 'world': {}
             }
         },
-        { 
+        {
             'name': 'Gast',
             'worlds': {
                 'global': {},
@@ -286,7 +290,7 @@ Polymer('permission-edit',{
             }
         }
     ],
-    
+
     /*
     funktions for open the dialogs
     */
@@ -316,7 +320,7 @@ Polymer('permission-edit',{
     openeditworldfkt: function(e){
         //only if its not the default world
         if(e.target.templateInstance.model.index != 0){
-            this.openeditworld = true;  
+            this.openeditworld = true;
         }
     },
     openeditgroupfkt: function(e){
@@ -330,35 +334,36 @@ Polymer('permission-edit',{
         //and toggel the background of the default button so he has the right design
         this.$.editdefaultbutton.toggleBackground();
     },
-    
+
     /*
     delets the selected group
-    
+
     @param e eventdata
     */
     delGroup: function(e){
         //get the group thats button is pushed
         var delgroup = e.target.templateInstance.model.group
-        
+
         //splice the element out of the array
         this.groups.splice(this.groups.indexOf(delgroup),1);
         //and save to google analytics
-        _gaq.push(['_trackEvent', 'group', 'delete', delgroup.name]); 
+        this.$.la.trackEvent('group', 'delete', delgroup.name);
+    //    _gaq.push(['_trackEvent', 'group', 'delete', delgroup.name]);
     },
-    
+
     /*
     delets the selected plugin
-    
+
     @param e eventdata
     */
     delplugin: function(e){
         //get the pluginname and the index
         var pluginindex = e.target.templateInstance.model.index;
         var name = e.target.templateInstance.model.plugin.plugin;
-        
+
         //delet the element from the array
         this.permissions.splice(pluginindex,1);
-        
+
         //delet the plugin from each world
         for(var i = 0; i < this.groups.length; i++){
             for(world in this.groups[i].worlds){
@@ -367,20 +372,21 @@ Polymer('permission-edit',{
                 }
             }
         }
-        
+
         //readd the plugin to the addselector
         this.plugins.push(name);
-        
+
         //save stat data to google analytics
-        _gaq.push(['_trackEvent', 'plugin', 'delete', name]); 
+        this.$.la.trackEvent('plugin', 'delete', name);
+    //    _gaq.push(['_trackEvent', 'plugin', 'delete', name]);
     },
-    
+
     //select the default world
     SelectedWorld: 0,
-    
+
     /*
     delets the selected world
-    
+
     @param e eventdata
     */
     delworld: function(e){
@@ -399,17 +405,18 @@ Polymer('permission-edit',{
                     delete this.groups[i].worlds[name];
                 }
             }
-            
+
             //save stat data to google analytics
-            _gaq.push(['_trackEvent', 'world', 'delete', name]); 
-        } 
+            this.$.la.trackEvent('world', 'delete', name);
+        //    _gaq.push(['_trackEvent', 'world', 'delete', name]);
+        }
     },
-    
+
     changeGroupsDefault : function(){
         if(!this.editgroup.options){
             this.editgroup.options = {}
         }
-        
+
         if(!this.editgroup.options.default){
             for(var i = 0; i < this.groups.length; i++){
                 if(this.groups[i].name != this.editgroup.name){
@@ -424,12 +431,12 @@ Polymer('permission-edit',{
             this.editgroup.options.default = false;
         }
     },
-    
+
     //set the validation of the newGroup to true, at init
     newGroup: {
         namevalid: true
     },
-    
+
     addWorld:  function(){
         this.openaddgroup = false;
         if(this.newWorld.import){
@@ -452,16 +459,17 @@ Polymer('permission-edit',{
 
         newWorld.name = this.newWorld.name;
 
-        _gaq.push(['_trackEvent', 'world', 'add', newWorld.name]); 
+        this.$.la.trackEvent('world', 'add', newWorld.name);
+    //    _gaq.push(['_trackEvent', 'world', 'add', newWorld.name]);
         this.worlds.push(newWorld);
     },
-    
+
     //no import for new worlds and the name is valid
     newWorld: {
         import: 0,
         namevalid: true
-    },    
-    
+    },
+
     addGroup:  function(){
         this.openaddgroup = false;
         if(this.newGroup.import){
@@ -482,7 +490,7 @@ Polymer('permission-edit',{
             }
         }
 
-        if(this.newGroup.prefix || this.newGroup.suffix || this.newGroup.rank || this.newGroup.default){ 
+        if(this.newGroup.prefix || this.newGroup.suffix || this.newGroup.rank || this.newGroup.default){
             newGroup.options = {};
         }
         newGroup.name = this.newGroup.name;
@@ -500,10 +508,11 @@ Polymer('permission-edit',{
             }
         }
 
-        _gaq.push(['_trackEvent', 'group', 'add', newGroup.name]); 
+        this.$.la.trackEvent('group', 'add', newGroup.name);
+        //_gaq.push(['_trackEvent', 'group', 'add', newGroup.name]);
         this.groups.push(newGroup);
     },
-    
+
     loadPlugin: function(){
         var newplugin = {};
         newplugin.plugin = this.newplugin.name;
@@ -521,33 +530,35 @@ Polymer('permission-edit',{
                     }
                 }
             }
-            
+
             for(var j = 0; j < newplugin.permissions.length; j++){
                 for(child in newplugin.permissions[j].children){
                     if(child == permission){
                         if(!newplugin.permissions[i].parents){newplugin.permissions[i].parents = {}}
                         newplugin.permissions[i].parents[newplugin.permissions[j].name] = newplugin.permissions[j].children[child];
-                    }    
-                        
+                    }
+
                 }
             }
             i++;
-        }     
+        }
         if(newplugin.plugin != undefined){
             console.log(JSON.stringify(newplugin));
             this.permissions.push(newplugin);
-            if(newplugin.plugin != this.lastplugin){_gaq.push(['_trackEvent', 'plugin', 'new', newplugin.plugin]);}
+            if(newplugin.plugin != this.lastplugin){this.$.la.trackEvent('plugin', 'new', newplugin.plugin);}
+            //if(newplugin.plugin != this.lastplugin){_gaq.push(['_trackEvent', 'plugin', 'new', newplugin.plugin]);}
             this.lastplugin = newplugin.plugin
         }
     },
-    
+
     openPlugin: function(){
         if(this.newpluginobj){
             this.permissions.push(this.newpluginobj);
-            _gaq.push(['_trackEvent', 'plugin', 'open', this.newpluginobj.plugin]); 
+            this.$.la.trackEvent('plugin', 'open', this.newpluginobj.plugin);
+            //_gaq.push(['_trackEvent', 'plugin', 'open', this.newpluginobj.plugin]);
         }
     },
-    
+
     created: function() {
         var langCode = navigator.language || navigator.systemLanguage;
         var lang = langCode.toLowerCase();
@@ -558,7 +569,7 @@ Polymer('permission-edit',{
             this.lang = "en";
         }
     },
-    
+
     addpermission: function(){
         this.openaddpermission = false;
         var plugin = this.addplugin;
@@ -581,14 +592,14 @@ Polymer('permission-edit',{
         }else{
             var permission = {};
         }
-        
+
         if(this.addpermissiondescription){
             permission.description = this.addpermissiondescription;
         }
-        
+
         permission.name = this.addpermissionname;
         plugin.permissions.push(permission);
-        
+
         this.addpermissiondescription = undefined;
         this.addpermissionname = undefined;
         this.addpermissionimport = undefined;
@@ -599,7 +610,7 @@ Polymer('permission-edit',{
         "de": "de",
         "en": "en"
     },
-    
+
     //init worlds
     worlds: [
         {
@@ -629,15 +640,3 @@ Polymer('permission-edit',{
         }
     }
 });
-
-/*Google Analytics stuff*/
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-60277501-2']);
-_gaq.push(['_gat._anonymizeIp']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();

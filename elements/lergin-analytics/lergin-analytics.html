@@ -1,0 +1,45 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="lergin-analytics">
+    <script>
+            Polymer("lergin-analytics",{
+                trackView: function() {
+                    this.sendtrack("pageview",'','','');
+                },
+
+                trackEvent: function(group, tag, label) {
+                    this.sendtrack("event",group,tag,label);
+                },
+
+                sendtrack: function(action, group, tag, label) {
+                    var lang = navigator.language;
+                    var appName = navigator.appCodeName;
+                    var appVersion = navigator.appVersion;
+                    var platform = navigator.platform;
+                    var referrer = document.referrer;
+
+                    if(navigator.userAgent.indexOf("Chrome") > -1 && !(navigator.userAgent.toLowerCase().indexOf("op") > -1)){
+                        appName = "Chrome"
+                    }else if(navigator.userAgent.toLowerCase().indexOf("op") > -1){
+                        appName = "Opera"
+                    }else if(navigator.userAgent.indexOf("Firefox") > -1 ){
+                        appName = "Firefox"
+                    }else if(navigator.userAgent.indexOf("Safari") > -1 && !(navigator.userAgent.indexOf('Chrome') > -1)){
+                        appName = "Firefox"
+                    }else if((navigator.userAgent.indexOf("MSIE") > -1 ) || (!!document.documentMode == true )){
+                        appName = "IE"
+                    }
+
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.async = !0;
+                    script.src = "http://lergin.lima-city.de/track.php?lang=" + lang + "&category=" + group + "&action=" + action + "&tag=" + tag + "&label=" + label + "&platform=" + platform
+                    + "&referrer=" + referrer + "&app=" + appName + "&appVersion=" + appVersion;
+                    script.id = "la";
+                    var d = document.getElementsByTagName("script")[0];
+                    d.parentNode.insertBefore(script, d);
+                }
+
+            });
+    </script>
+</polymer-element>

@@ -1,275 +1,275 @@
 <!doctype html>
 <html lang="de,en">
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Permissioneditor 0.4.2</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Permissioneditor 0.4.4</title>
 
-        <link rel="stylesheet" href="styles/main.css">  
-        <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
-        <link rel="import" href="elements/elements.html">
-    </head>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="elements/elements.html">
+</head>
 
-    <body unresolved layout vertical>
-        <polymer-element name="permission-edit">
-            <template>
-                <link rel="stylesheet" href="styles/main.css">
-                <core-ajax auto url="scripts/plugins.json" handleAs="json" response="{{plugins}}"></core-ajax>
-                <core-ajax auto url="locales/{{lang}}.json" handleAs="json" response="{{translation}}"></core-ajax>
-                <core-ajax id="getplugin" url="Plugins/{{newpluginnameconfirmed}}.json" handleAs="json" response="{{newpluginobj}}" on-core-response="{{openPlugin}}"></core-ajax>
-                <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
-                <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml"></yaml-js>
-                <yaml-js yaml="{{pluginyaml}}" js="{{newplugin}}" mode="tojs" on-core-ready="{{loadPlugin}}"></yaml-js>
+<body unresolved layout vertical>
+    <polymer-element name="permission-edit">
+        <template>
+            <link rel="stylesheet" href="styles/main.css">
+            <core-ajax auto url="scripts/plugins.json" handleAs="json" response="{{plugins}}"></core-ajax>
+            <core-ajax auto url="locales/{{lang}}.json" handleAs="json" response="{{translation}}"></core-ajax>
+            <core-ajax id="getplugin" url="Plugins/{{newpluginnameconfirmed}}.json" handleAs="json" response="{{newpluginobj}}" on-core-response="{{openPlugin}}"></core-ajax>
+            <lergin-analytics id="la"></lergin-analytics>
+            <yaml-js yaml="{{yaml}}" js="{{jsnew}}" mode="tojs" on-core-ready="{{loadPermissions}}"></yaml-js>
+            <yaml-js yaml="{{yamlnew}}" js="{{js}}" mode="toyaml"></yaml-js>
+            <yaml-js yaml="{{pluginyaml}}" js="{{newplugin}}" mode="tojs" on-core-ready="{{loadPlugin}}"></yaml-js>
 
-                <div>
-                    <paper-button raised on-tap="{{openimportfkt}}">{{translation.action.import}}</paper-button>
-                    <paper-button raised on-tap="{{save}}{{openexportfkt}}">{{translation.action.export}}</paper-button>
-                    <paper-button raised on-tap="{{openaddworldfkt}}">{{translation.world.add}}</paper-button>
-                    <paper-button raised on-tap="{{openaddgroupfkt}}">{{translation.group.add}}</paper-button>
-                    <paper-button raised on-tap="{{openaddpluginfkt}}">{{translation.plugin.add}}</paper-button>
-                </div>
+            <div>
+                <paper-button raised on-tap="{{openimportfkt}}">{{translation.action.import}}</paper-button>
+                <paper-button raised on-tap="{{save}}{{openexportfkt}}">{{translation.action.export}}</paper-button>
+                <paper-button raised on-tap="{{openaddworldfkt}}">{{translation.world.add}}</paper-button>
+                <paper-button raised on-tap="{{openaddgroupfkt}}">{{translation.group.add}}</paper-button>
+                <paper-button raised on-tap="{{openaddpluginfkt}}">{{translation.plugin.add}}</paper-button>
+            </div>
 
-                <div class="mainlayout">
-                    <div class="buttonlist" id="world">
-                        <paper-shadow>
-                            <core-tooltip label="{{translation.world.add}}" layout horizontal>
-                                <paper-item on-tap="{{openaddworldfkt}}" class="head" layout center horizontal center-justified>{{translation.world.worlds}}</paper-item>
-                            </core-tooltip>
-                            <core-selector selected="{{SelectedWorld}}" class="list">
-                                <template repeat="{{world, index in worlds}}">
-                                    <paper-item>
-                                        <span flex>{{world.name}}</span>
-                                        <core-tooltip label="{{translation.world.delete}}">
-                                            <core-icon on-tap="{{delworld}}" icon="delete"></core-icon>
-                                        </core-tooltip>
-                                        <core-tooltip label="{{translation.world.edit}}">
-                                            <core-icon on-tap="{{openeditworldfkt}}" icon="editor:mode-edit"></core-icon>
-                                        </core-tooltip>
-                                    </paper-item>
-                                </template>
-                            </core-selector>
-                        </paper-shadow>
-                    </div>
-                    <div class="buttonlist">          
-                        <paper-shadow>
-                            <core-tooltip label="{{translation.group.add}}" layout horizontal>
-                                <paper-item on-tap="{{openaddgroupfkt}}" class="head" layout center horizontal center-justified>{{translation.group.groups}}</paper-item>
-                            </core-tooltip>
-                            <core-selector selected="{{SelectedGroup}}" class="list">
-                                <template repeat="{{group in groups}}">
-                                    <paper-item>
-                                        <span flex>{{group.name}}</span>
-                                        <core-tooltip label="{{translation.group.delete}}">
-                                            <core-icon on-tap="{{delGroup}}" icon="delete"></core-icon>
-                                        </core-tooltip>
-                                        <core-tooltip label="{{translation.group.edit}}">
-                                            <core-icon on-tap="{{openeditgroupfkt}}" icon="editor:mode-edit"></core-icon>
-                                        </core-tooltip>
-                                    </paper-item>
-                                </template>
-                            </core-selector>
-                        </paper-shadow>
-                    </div>
-                    <div class="buttonlist">
-                        <paper-shadow>
-                            <core-tooltip label="{{translation.plugin.add}}" layout horizontal>
-                                <paper-item on-tap="{{openaddpluginfkt}}" class="head" layout center horizontal center-justified>{{translation.plugin.plugins}}</paper-item>
-                            </core-tooltip>
-                            <core-selector selected="{{SelectedPlugin}}" class="list">
-                                <template repeat="{{plugin, index in permissions}}">
-                                    <paper-item>
-                                        <span flex>{{plugin.plugin}}</span>
-                                        <core-tooltip label="{{translation.plugin.delete}}">
-                                            <core-icon on-tap="{{delplugin}}" icon="delete"></core-icon>
-                                        </core-tooltip>
-                                        <core-tooltip label="{{translation.permission.add}}">
-                                            <core-icon on-tap="{{openaddpermissionfkt}}" icon="add"></core-icon>
-                                        </core-tooltip>
-                                    </paper-item>
-                                </template>
-                            </core-selector>
-                        </paper-shadow>
-                    </div>
-                    <div>
-                        <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
-                            <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
-                                <div class="permission item" layout horizontal on-tap="{{checkboxchanged}}">
-                                    <paper-checkbox nodefault?="{{SelectedWorld?((groups[SelectedGroup].worlds.global[permissions[SelectedPlugin].plugin][permission.name]?true:false) != (groups[SelectedGroup].worlds[worlds[SelectedWorld].name][permissions[SelectedPlugin].plugin][permission.name]?true:false)?true:false):false}}" checked?="{{groups[SelectedGroup].worlds[worlds[SelectedWorld].name][permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
-                                    <div class="key">
-                                        {{permission.name}}
-                                    </div>
-                                    {{permission.description}}
-                                </div>
+            <div class="mainlayout">
+                <div class="buttonlist" id="world">
+                    <paper-shadow>
+                        <core-tooltip label="{{translation.world.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddworldfkt}}" class="head" layout center horizontal center-justified>{{translation.world.worlds}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedWorld}}" class="list">
+                            <template repeat="{{world, index in worlds}}">
+                                <paper-item>
+                                    <span flex>{{world.name}}</span>
+                                    <core-tooltip label="{{translation.world.delete}}">
+                                        <core-icon on-tap="{{delworld}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.world.edit}}">
+                                        <core-icon on-tap="{{openeditworldfkt}}" icon="editor:mode-edit"></core-icon>
+                                    </core-tooltip>
+                                </paper-item>
                             </template>
+                        </core-selector>
+                    </paper-shadow>
+                </div>
+                <div class="buttonlist">
+                    <paper-shadow>
+                        <core-tooltip label="{{translation.group.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddgroupfkt}}" class="head" layout center horizontal center-justified>{{translation.group.groups}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedGroup}}" class="list">
+                            <template repeat="{{group in groups}}">
+                                <paper-item>
+                                    <span flex>{{group.name}}</span>
+                                    <core-tooltip label="{{translation.group.delete}}">
+                                        <core-icon on-tap="{{delGroup}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.group.edit}}">
+                                        <core-icon on-tap="{{openeditgroupfkt}}" icon="editor:mode-edit"></core-icon>
+                                    </core-tooltip>
+                                </paper-item>
+                            </template>
+                        </core-selector>
+                    </paper-shadow>
+                </div>
+                <div class="buttonlist">
+                    <paper-shadow>
+                        <core-tooltip label="{{translation.plugin.add}}" layout horizontal>
+                            <paper-item on-tap="{{openaddpluginfkt}}" class="head" layout center horizontal center-justified>{{translation.plugin.plugins}}</paper-item>
+                        </core-tooltip>
+                        <core-selector selected="{{SelectedPlugin}}" class="list">
+                            <template repeat="{{plugin, index in permissions}}">
+                                <paper-item>
+                                    <span flex>{{plugin.plugin}}</span>
+                                    <core-tooltip label="{{translation.plugin.delete}}">
+                                        <core-icon on-tap="{{delplugin}}" icon="delete"></core-icon>
+                                    </core-tooltip>
+                                    <core-tooltip label="{{translation.permission.add}}">
+                                        <core-icon on-tap="{{openaddpermissionfkt}}" icon="add"></core-icon>
+                                    </core-tooltip>
+                                </paper-item>
+                            </template>
+                        </core-selector>
+                    </paper-shadow>
+                </div>
+                <div>
+                    <template if="{{SelectedGroup != undefined && SelectedPlugin != undefined}}">
+                        <template repeat="{{permission in permissions[SelectedPlugin].permissions}}">
+                            <div class="permission item" layout horizontal on-tap="{{checkboxchanged}}">
+                                <paper-checkbox nodefault?="{{SelectedWorld?((groups[SelectedGroup].worlds.global[permissions[SelectedPlugin].plugin][permission.name]?true:false) != (groups[SelectedGroup].worlds[worlds[SelectedWorld].name][permissions[SelectedPlugin].plugin][permission.name]?true:false)?true:false):false}}"
+                                checked?="{{groups[SelectedGroup].worlds[worlds[SelectedWorld].name][permissions[SelectedPlugin].plugin][permission.name]}}"></paper-checkbox>
+                                <div class="key">
+                                    {{permission.name}}
+                                </div>
+                                {{permission.description}}
+                            </div>
                         </template>
-                    </div>
-                </div> 
+                    </template>
+                </div>
+            </div>
 
 
 
-                <!--Dialoge-->
+            <!--Dialoge-->
 
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openaddgroup}}">
-                    <div id="addgroup" layout vertical>
-                        <paper-input-decorator floatingLabel label="{{translation.group.name}}" isInvalid?="{{!newGroup.namevalid}}" error="{{translation.error.name}}">
-                            <input value="{{newGroup.name}}" is="core-input">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{newGroup.prefixvalid}}">
-                            <input is="core-input" value="{{newGroup.prefix}}">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{newGroup.suffixvalid}}">
-                            <input is="core-input" value="{{newGroup.suffix}}">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.inputrank.validity.valid}}" error="{{translation.error.name}}">
-                            <input id="inputrank" value="{{newGroup.rank}}" type="number" is="core-input" pattern="^[0-9]*">
-                        </paper-input-decorator>
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddgroup}}">
+                <div id="addgroup" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" isInvalid?="{{!newGroup.namevalid}}" error="{{translation.error.name}}">
+                        <input value="{{newGroup.name}}" is="core-input">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{newGroup.prefixvalid}}">
+                        <input is="core-input" value="{{newGroup.prefix}}">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{newGroup.suffixvalid}}">
+                        <input is="core-input" value="{{newGroup.suffix}}">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.inputrank.validity.valid}}" error="{{translation.error.name}}">
+                        <input id="inputrank" value="{{newGroup.rank}}" type="number" is="core-input" pattern="^[0-9]*">
+                    </paper-input-decorator>
 
-                        <paper-dropdown-menu label="{{translation.group.copy}}">
-                            <paper-dropdown layered class="dropdown">
-                                <core-menu class="menu" selected="{{newGroup.import}}">
-                                    <paper-item>{{translation.none}}</paper-item>
-                                    <template repeat="{{group in groups}}">
-                                        <paper-item>{{group.name}}</paper-item>
-                                    </template>
-                                </core-menu>
-                            </paper-dropdown>
-                        </paper-dropdown-menu>
-
-                        <paper-button raised toggle active="{{newGroup.default}}">{{translation.group.default}}</paper-button>
-                        <br>
-                        <paper-button raised on-tap="{{addGroup}}">{{translation.action.add}}</paper-button>
-                    </div>
-                </paper-dialog>
-
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openeditgroup}}">
-                    <div layout vertical>
-                        <paper-input-decorator floatingLabel label="{{translation.group.name}}" error="{{translation.error.name}}">
-                            <input value="{{editgroup.name}}" is="core-input">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{editgroup.prefixvalid}}" error="Error">
-                            <input is="core-input" value="{{editgroup.options.prefix}}">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{editgroup.suffixvalid}}" error="Error">
-                            <input is="core-input" value="{{editgroup.options.suffix}}">
-                        </paper-input-decorator>
-                        <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.editinputrank.validity.valid}}" error="{{translation.error.noint}}">
-                            <input id="editinputrank" value="{{editgroup.options.rank}}" type="number" is="core-input" pattern="^[0-9]*">
-                        </paper-input-decorator>
-
-                        <paper-button id="editdefaultbutton" raised toggle on-tap="{{changeGroupsDefault}}">{{translation.group.default}}</paper-button>
-                    </div>
-                </paper-dialog>
-
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openimport}}">
-                    <div style="height: 75vh;width:75vw">
-                        <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="{{translation.action.import}}"></textarea>
-                    </div>
-                </paper-dialog>
-
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openexport}}" >
-                    <div style="height: 75vh;width:75vw">
-                        <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="{{translation.action.export}}"></textarea>
-                    </div>
-                </paper-dialog>
-
-               <paper-dialog backdrop transition="core-transition-top" opened="{{openaddplugin}}">
-                    <div vertical center-justified layout>
-                        <form onSubmit="return false">
-                            <paper-input-decorator floatingLabel label="{{translation.plugin.select}}">
-                                <input is="core-input" type="search" value="{{newpluginname}}" list="plugins" on-change="{{startaddplugin}}">
-                            </paper-input-decorator>
-
-                            <datalist id="plugins">
-                                <template repeat="{{plugin in plugins}}">
-                                    <option value="{{plugin}}">
+                    <paper-dropdown-menu label="{{translation.group.copy}}">
+                        <paper-dropdown layered class="dropdown">
+                            <core-menu class="menu" selected="{{newGroup.import}}">
+                                <paper-item>{{translation.none}}</paper-item>
+                                <template repeat="{{group in groups}}">
+                                    <paper-item>{{group.name}}</paper-item>
                                 </template>
-                            </datalist>
-                        </form>
-                        <br>
-                        <paper-button raised on-tap="{{openaddpluginbyfilefkt}}">{{translation.plugin.addouther}}</paper-button>
-                    </div>
-                </paper-dialog>
+                            </core-menu>
+                        </paper-dropdown>
+                    </paper-dropdown-menu>
 
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
-                    <div style="height: 75vh;width:75vw">
-                        <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="{{translation.pluginyml}}"></textarea>
-                    </div>
-                </paper-dialog>
+                    <paper-button raised toggle active="{{newGroup.default}}">{{translation.group.default}}</paper-button>
+                    <br>
+                    <paper-button raised on-tap="{{addGroup}}">{{translation.action.add}}</paper-button>
+                </div>
+            </paper-dialog>
 
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openaddworld}}">
-                    <div id="addworld" layout vertical>
-                        <paper-input-decorator floatingLabel label="{{translation.world.name}}" isInvalid?="{{!newWorld.namevalid}}" error="{{translation.error.name}}">
-                            <input value="{{newWorld.name}}" is="core-input">
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openeditgroup}}">
+                <div layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.group.name}}" error="{{translation.error.name}}">
+                        <input value="{{editgroup.name}}" is="core-input">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.prefix}}" isInvalid?="{{editgroup.prefixvalid}}" error="Error">
+                        <input is="core-input" value="{{editgroup.options.prefix}}">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.suffix}}" isInvalid?="{{editgroup.suffixvalid}}" error="Error">
+                        <input is="core-input" value="{{editgroup.options.suffix}}">
+                    </paper-input-decorator>
+                    <paper-input-decorator floatingLabel label="{{translation.group.rank}}" isInvalid?="{{!$.editinputrank.validity.valid}}" error="{{translation.error.noint}}">
+                        <input id="editinputrank" value="{{editgroup.options.rank}}" type="number" is="core-input" pattern="^[0-9]*">
+                    </paper-input-decorator>
+
+                    <paper-button id="editdefaultbutton" raised toggle on-tap="{{changeGroupsDefault}}">{{translation.group.default}}</paper-button>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openimport}}">
+                <div style="height: 75vh;width:75vw">
+                    <textarea style="height: 100%;width: 100%" value="{{yaml}}" placeholder="{{translation.action.import}}"></textarea>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openexport}}">
+                <div style="height: 75vh;width:75vw">
+                    <textarea style="height: 100%;width: 100%" value="{{yamlnew}}" placeholder="{{translation.action.export}}"></textarea>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddplugin}}">
+                <div vertical center-justified layout>
+                    <form onSubmit="return false">
+                        <paper-input-decorator floatingLabel label="{{translation.plugin.select}}">
+                            <input is="core-input" type="search" value="{{newpluginname}}" list="plugins" on-change="{{startaddplugin}}">
                         </paper-input-decorator>
 
-                        <paper-dropdown-menu label="{{translation.world.copy}}">
-                            <paper-dropdown layered class="dropdown">
-                                <core-menu class="menu" selected="{{newWorld.import}}">
-                                    <paper-item>{{translation.none}}</paper-item>
-                                    <template repeat="{{world in worlds}}">
-                                        <paper-item>{{world.name}}</paper-item>
-                                    </template>
-                                </core-menu>
-                            </paper-dropdown>
-                        </paper-dropdown-menu>
-                        <br>
-                        <paper-button raised on-tap="{{addWorld}}">{{translation.action.add}}</paper-button>
-                    </div>
-                </paper-dialog>
+                        <datalist id="plugins">
+                            <template repeat="{{plugin in plugins}}">
+                                <option value="{{plugin}}">
+                            </template>
+                        </datalist>
+                    </form>
+                    <br>
+                    <paper-button raised on-tap="{{openaddpluginbyfilefkt}}">{{translation.plugin.addouther}}</paper-button>
+                </div>
+            </paper-dialog>
 
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpermission}}">
-                    <div id="addworld" layout vertical>
-                        <paper-input-decorator floatingLabel label="{{translation.permission.key}}">
-                            <input committedValue="{{addpermissionname}}" is="core-input">
-                        </paper-input-decorator>
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpluginbyfile}}">
+                <div style="height: 75vh;width:75vw">
+                    <textarea style="height: 100%;width: 100%" value="{{pluginyaml}}" placeholder="{{translation.pluginyml}}"></textarea>
+                </div>
+            </paper-dialog>
 
-                        <paper-input-decorator floatingLabel label="{{translation.permission.description}}">
-                            <input value="{{addpermissiondescription}}" is="core-input">
-                        </paper-input-decorator>
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddworld}}">
+                <div id="addworld" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" isInvalid?="{{!newWorld.namevalid}}" error="{{translation.error.name}}">
+                        <input value="{{newWorld.name}}" is="core-input">
+                    </paper-input-decorator>
 
-                        <paper-dropdown-menu label="{{translation.permission.copy}}">
-                            <paper-dropdown layered class="dropdown">
-                                <core-menu class="menu" selected="{{addpermissionimport}}">
-                                    <paper-item>{{translation.none}}</paper-item>
-                                    <template repeat="{{permission in addplugin.permissions}}">
-                                        <paper-item>{{permission.name}}</paper-item>
-                                    </template>
-                                </core-menu>
-                            </paper-dropdown>
-                        </paper-dropdown-menu>
-                        <br>
-                        <paper-button raised on-tap="{{addpermission}}">{{translation.action.add}}</paper-button>
-                    </div>
-                </paper-dialog>
+                    <paper-dropdown-menu label="{{translation.world.copy}}">
+                        <paper-dropdown layered class="dropdown">
+                            <core-menu class="menu" selected="{{newWorld.import}}">
+                                <paper-item>{{translation.none}}</paper-item>
+                                <template repeat="{{world in worlds}}">
+                                    <paper-item>{{world.name}}</paper-item>
+                                </template>
+                            </core-menu>
+                        </paper-dropdown>
+                    </paper-dropdown-menu>
+                    <br>
+                    <paper-button raised on-tap="{{addWorld}}">{{translation.action.add}}</paper-button>
+                </div>
+            </paper-dialog>
 
-                <paper-dialog backdrop transition="core-transition-top" opened="{{openeditworld}}">
-                    <div id="editworld" layout vertical>
-                        <paper-input-decorator floatingLabel label="{{translation.world.name}}" error="{{translation.error.name}}">
-                            <input value="{{worlds[SelectedWorld].name}}" is="core-input">
-                        </paper-input-decorator>
-                    </div>
-                </paper-dialog>
-            </template>
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openaddpermission}}">
+                <div id="addworld" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.permission.key}}">
+                        <input committedValue="{{addpermissionname}}" is="core-input">
+                    </paper-input-decorator>
 
-            <!-- build:js scripts/app.min.js -->
-            <script src="scripts/app.js"></script>
-            <!-- endbuild-->
+                    <paper-input-decorator floatingLabel label="{{translation.permission.description}}">
+                        <input value="{{addpermissiondescription}}" is="core-input">
+                    </paper-input-decorator>
 
+                    <paper-dropdown-menu label="{{translation.permission.copy}}">
+                        <paper-dropdown layered class="dropdown">
+                            <core-menu class="menu" selected="{{addpermissionimport}}">
+                                <paper-item>{{translation.none}}</paper-item>
+                                <template repeat="{{permission in addplugin.permissions}}">
+                                    <paper-item>{{permission.name}}</paper-item>
+                                </template>
+                            </core-menu>
+                        </paper-dropdown>
+                    </paper-dropdown-menu>
+                    <br>
+                    <paper-button raised on-tap="{{addpermission}}">{{translation.action.add}}</paper-button>
+                </div>
+            </paper-dialog>
 
-        </polymer-element>
-        <permission-edit></permission-edit>
-        <span class="imprint" layout horizontal>
-            <span flex>
-                <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow" target="_blank">Impressum</a>
-                <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow" target="_blank">Datenschutz</a>
-            </span>
-            <span flex>Copyright &copy; 2015 Malte 'Lergin' Lauk&ouml;tter</span>
+            <paper-dialog backdrop transition="core-transition-top" opened="{{openeditworld}}">
+                <div id="editworld" layout vertical>
+                    <paper-input-decorator floatingLabel label="{{translation.world.name}}" error="{{translation.error.name}}">
+                        <input value="{{worlds[SelectedWorld].name}}" is="core-input">
+                    </paper-input-decorator>
+                </div>
+            </paper-dialog>
+        </template>
 
+        <script src="scripts/app.js"></script>
 
-            <span>Fork this project on <a href="https://github.com/Lergin/JavaScript-Permission-Editor" target="_blank">Github</a> or visit my outher projects: <a href="https://github.com/Lergin/" target="_blank">Github</a> <a href="http://lergin.lima-city.de" target="_blank">Demopage</a></span>
+    </polymer-element>
+
+    <permission-edit></permission-edit>
+
+    <span class="imprint" layout horizontal>
+        <span flex>
+            <a href="http://lergin.lima-city.de/impressum.html" rel="nofollow" target="_blank">Impressum</a>
+            <a href="http://lergin.lima-city.de/datenschutz.html" rel="nofollow" target="_blank">Datenschutz</a>
         </span>
-    </body>
+        <span flex>Copyright &copy; 2015 Malte 'Lergin' Lauk&ouml;tter</span>
+        <span>Fork this project on <a href="https://github.com/Lergin/JavaScript-Permission-Editor" target="_blank">Github</a> or visit my outher projects: <a href="https://github.com/Lergin/" target="_blank">Github</a> <a href="http://lergin.lima-city.de"
+            target="_blank">Demopage</a></span>
+    </span>
+</body>
 
 </html>

@@ -1,0 +1,1 @@
+$ vulcanize -o index.html work.html -s --csp --inline
